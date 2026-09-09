@@ -24,8 +24,14 @@ Eleven controls drive a live aerodynamic model — nine on the rig, two on the k
 | **Kite sheet** | flown on the edge of collapse: ease to the curl, then stop |
 | **Kite tack line** | how high the tack floats — projected area deep, straight luff reaching |
 
-The kite is up on Reaching and Downwind and stowed Upwind, where its two controls
-grey out.
+Point of sail is set on a compass dial above the slices diagram, as a continuous true
+wind angle rather than three preset modes. The dial hatches out what you cannot sail:
+the no-go zone either side of head-to-wind, and the dead-downwind sector you would
+gybe through instead. **Both edges move with the breeze** — in 4 knots you can only
+point to 49° and only soak to 139°, while by 18 knots that opens out to 40° and 170°.
+A teal band marks where the kite earns its place, which also shifts with wind: from
+66° in the light, out to 92° when it is windy enough that you bear away before
+hoisting. The kite's two controls grey out whenever the angle is above that.
 
 There is deliberately no kite halyard control. It is two-blocked and stays there — an
 asymmetric tensions its luff between head and tack, so anything less just lets the luff
@@ -66,6 +72,12 @@ The kite is flown the way a kite is actually flown. Nothing in the code says "ea
 the curl" — but run a search for the fastest kite trim at any wind speed and it lands on
 a luff angle about 2-3° below the collapse point, in every mode, every time. Downwind the
 binding constraint is not heel but burying the bow, and the model is built that way.
+
+Every constant that used to switch on a three-way mode now interpolates between the
+same three anchors — 45° close-hauled, 105° reaching, 148° running — so the dial is
+continuous and the original calibration still holds exactly at those angles. The kite
+sheet target is not tabulated at all: it is solved directly for the setting that puts
+the luff on the curl, which is correct at any angle.
 
 It was checked numerically rather than by eye. At the recommended settings across 4–25
 knots, draft stays pinned near 46% while camber falls 11.9% → 7.6% and twist traces a U
