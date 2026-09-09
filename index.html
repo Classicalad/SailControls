@@ -112,6 +112,13 @@ h3{font-size:16px;font-weight:700}
 .ctrl-val{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;color:var(--ink-3)}
 .ctrl-val .d{margin-left:7px;font-weight:600}
 .ctrl-val .d.hi{color:var(--load-2)} .ctrl-val .d.ok{color:var(--flow)}
+.grp{display:flex;align-items:center;gap:9px;margin:16px 0 2px;padding-top:12px;border-top:1px solid var(--line)}
+.grp .rule{flex:1;height:1px;background:var(--line-soft)}
+.grp .grp-note{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--flow);white-space:nowrap}
+.grp.off .grp-note{color:var(--ink-3)}
+.ctrl.off{opacity:.42}
+.ctrl.off .ctrl-name{cursor:default}
+.ctrl.off input[type=range]{cursor:not-allowed}
 .slot{position:relative;height:22px;display:flex;align-items:center}
 .slot .target{position:absolute;top:1px;bottom:1px;width:2px;background:var(--load-2);opacity:.85;
   left:calc(9px + var(--t) * (100% - 18px));transform:translateX(-1px);transition:left .5s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:2}
@@ -276,15 +283,19 @@ tr:last-child td{border-bottom:0}
   <section class="card">
     <div class="card-hd"><span class="eyebrow">01 · The rig, from the side</span><span class="rule"></span></div>
     <div class="card-bd">
-      <svg id="rig" viewBox="0 0 300 430" role="img" aria-labelledby="rig-t">
+      <svg id="rig" viewBox="0 0 336 430" role="img" aria-labelledby="rig-t">
         <title id="rig-t">Side elevation of the rig showing mast bend, forestay sag, boom angle and sail depth</title>
         <g id="rig-static">
-          <line x1="8" y1="392" x2="292" y2="392" class="s-line" stroke-width="1"/>
+          <line x1="8" y1="392" x2="328" y2="392" class="s-line" stroke-width="1"/>
           <path id="hull" d="" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
         </g>
+        <path id="sprit" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
         <path id="forestay" class="s-ink" stroke-width="1.2"/>
         <path id="sagref" class="s-dim" stroke-width="1" stroke-dasharray="3 3" opacity=".8"/>
         <path id="jib" class="sailB"/>
+        <path id="kite" fill="var(--flow)" fill-opacity=".16" stroke="var(--flow)" stroke-width="1.3"/>
+        <path id="kiteluff" fill="none" stroke="var(--flow)" stroke-width="2.4" stroke-linecap="round"/>
+        <path id="tackline" fill="none" stroke="var(--load-2)" stroke-width="1.3"/>
         <path id="main" class="sailA"/>
         <path id="stripe1" class="s-dim" stroke-width=".8" stroke-dasharray="2 3"/>
         <path id="stripe2" class="s-dim" stroke-width=".8" stroke-dasharray="2 3"/>
@@ -457,6 +468,33 @@ tr:last-child td{border-bottom:0}
 </section>
 
 <section class="lesson">
+  <div class="lesson-hd"><h2>Flying the kite</h2><span class="rule"></span>
+    <span class="eyebrow">one rule, then three refinements</span></div>
+  <p class="prose" style="margin:0 0 16px">A mainsail is trimmed to a shape. A spinnaker is trimmed to an <em>edge</em>. Everything else about flying it is detail hung off that one idea.</p>
+  <div class="ladder" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--flow);font-size:10.5px">THE RULE</span>
+      <h3 style="margin:6px 0 8px">Ease until it curls, then stop</h3>
+      <p class="prose" style="font-size:15.5px">Let the sheet out until the luff just folds in on itself, then take back the smallest amount that makes the fold disappear. That is it. Sitting on that edge, the kite is making every bit of drive it has in it. A hand's width further out and the luff collapses and it is pulling <b>nothing</b> — a soft kite is not a gentle setting, it is no setting. A hand's width in and it is still full, still looks lovely, and has quietly stopped being a wing. <b>The curl is the only instrument you have, so keep the sheet moving and keep finding it.</b></p>
+    </div></div>
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--load-2);font-size:10.5px">TACK LINE</span>
+      <h3 style="margin:6px 0 8px">High when deep, down when reaching</h3>
+      <p class="prose" style="font-size:15.5px">Eased, the tack floats up off the sprit and the whole sail lifts and rotates to windward — more area projected where the wind actually is, which is what running deep is about. Pulled down, the luff goes straight and tight and the sail holds its shape at the sharper angles a reach demands. The model will show you the camber moving as you slide it: roughly 23% deep with the tack flying, 18% with it strapped down. And in a lot of breeze, a high tack is also precisely what puts the load high and forward — which is to say, what buries the bow.</p>
+    </div></div>
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--flow);font-size:10.5px">HALYARD &amp; ANGLES</span>
+      <h3 style="margin:6px 0 8px">Let it go and find its own wind</h3>
+      <p class="prose" style="font-size:15.5px">Easing the halyard a few inches lets the whole sail fly away from the rig and out of the mainsail's dirty air — worth real distance deep, not worth the instability on a tight reach. And watch the apparent wind readout as you bear away: sailing deep in a 14, boat speed eats the true wind, and the apparent can drop to a fraction of it. That is why you do not sail dead downwind. <b>You gybe through angles, trading distance for pressure</b>, and the kite tells you when you have gone too deep by getting soft and hard to keep on the curl.</p>
+    </div></div>
+  </div>
+  <div class="note">
+    <span class="eyebrow" style="color:var(--load-2)">The limit downwind is not heel</span>
+    <p>Upwind, what stops you is the boat falling over. Downwind, it is the bow going under. A big kite with the tack up, loaded in a breeze, puts an enormous force high and a long way forward of the mast, and the bow is what pays for it. That is why the tack line comes down as the wind builds, why the crew goes aft, and why nobody cleats the kite sheet. Past a certain point the honest answer is not a trim setting at all — it is that the kite comes down.</p>
+  </div>
+</section>
+
+<section class="lesson">
   <div class="lesson-hd"><h2>What is particular about a Fourteen</h2><span class="rule"></span></div>
   <div class="grid3">
     <div class="gcell"><span class="tag">NO TRAVELLER</span><h3>The sheet does two jobs</h3>
@@ -521,12 +559,26 @@ var CONTROLS=[
   blurb:"The shrouds that land at the spreaders — lowers, intermediates or diamonds depending on how your rig is built. They own the middle of the mast: on hard, the middle is held straight; off, it is free to bow forward. This is your most direct handle on mast bend, and so on how full the bottom half of the main is.",
   light:"On. A straight mast leaves the luff round in the sail and the bottom half stays deep and powerful.",
   heavy:"Ease them and let the middle bow forward — the mast pulls luff round out of the sail and the lower main goes flat. Not so slack that it can over-bend or invert in a gust, though; that is how masts break."},
+ {k:"kite",name:"Kite sheet",kite:1,lo:"eased · luff folds",hi:"strapped in",
+  blurb:"The string you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
+  light:"Ease and ease again. In light air the curl is your only instrument, and the sheet load is so low that you have to work to feel it at all.",
+  heavy:"Still on the curl, but you will be playing it hard and constantly. Dumping the kite sheet is the fastest way to stand the boat back up when it loads."},
+ {k:"tack",name:"Kite tack line",kite:1,lo:"eased · tack flies high",hi:"on hard · down to the sprit",
+  blurb:"Sets how high the tack floats above the end of the bowsprit. Eased, the whole sail lifts and rotates to windward, so it projects more area where you want it when running deep. Pulled down, the luff goes straight and tight, which is what you want when you are reaching and the apparent wind is forward.",
+  light:"Ease it and let the kite float up and away — you are looking for projected area, not a tight luff.",
+  heavy:"Deep, still eased; tight reaching, pull it down. Note that a high tack in a lot of breeze is also what buries the bow."},
+ {k:"hal",name:"Kite halyard",kite:1,lo:"eased · flying free",hi:"two-blocked",
+  blurb:"Hoist tension. Easing a few inches lets the whole sail fly further from the rig and out of the mainsail's dirty air — worth real distance when you are deep. Two-blocked keeps it stable and the luff straight, which is what a tight reach wants.",
+  light:"Deep and light: ease it and let the kite go and find clean air of its own.",
+  heavy:"Closer to two-blocked. A kite flying loose in a breeze is an unstable kite, and instability off the wind in a 14 is expensive."},
  {k:"forestay",name:"Forestay",lo:"short · rig upright",hi:"long · raked aft",
   blurb:"Mostly a <em>length</em> control rather than a tension one. Let it out and the whole rig leans aft — that is rake. Its tension is not really yours to set directly: it is whatever the caps leave it. That is why these two never feel independent.",
   light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
   heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."}
 ];
 var CK=CONTROLS.map(function(c){return c.k});
+var KITEK=CONTROLS.filter(function(c){return c.kite}).map(function(c){return c.k});
+function activeKeys(){return S.mode==="upwind"?CK.filter(function(k){return KITEK.indexOf(k)<0}):CK}
 
 /* ════════ tuning targets (wind kts -> setting) ════════ */
 var TARGETS={
@@ -538,7 +590,8 @@ var TARGETS={
    lead:[[3,.24],[6,.30],[9,.38],[12,.46],[15,.56],[18,.68],[22,.80],[28,.92]],
    caps:[[3,.15],[6,.24],[9,.40],[12,.54],[15,.66],[18,.78],[22,.90],[28,1]],
    lowers:[[3,.70],[6,.68],[9,.62],[12,.55],[15,.46],[18,.36],[22,.28],[28,.22]],
-   forestay:[[3,.09],[6,.14],[9,.24],[12,.35],[15,.48],[18,.62],[22,.80],[28,.96]]},
+   forestay:[[3,.09],[6,.14],[9,.24],[12,.35],[15,.48],[18,.62],[22,.80],[28,.96]],
+   kite:[[3,0],[28,0]],tack:[[3,0],[28,0]],hal:[[3,0],[28,0]]},
  reach:{main:[[3,.62],[8,.66],[12,.62],[18,.54],[28,.44]],
    vang:[[3,.48],[8,.56],[12,.66],[18,.80],[28,.92]],
    cun:[[3,0],[8,.10],[12,.26],[18,.56],[28,.86]],
@@ -547,7 +600,10 @@ var TARGETS={
    lead:[[3,.44],[8,.54],[12,.64],[18,.78],[28,.90]],
    caps:[[3,.18],[8,.32],[12,.50],[18,.72],[28,.92]],
    lowers:[[3,.72],[8,.66],[12,.58],[18,.44],[28,.30]],
-   forestay:[[3,.08],[8,.14],[12,.24],[18,.44],[28,.74]]},
+   forestay:[[3,.08],[8,.14],[12,.24],[18,.44],[28,.74]],
+   kite:[[3,.87],[6,.81],[9,.73],[12,.69],[16,.65],[20,.63],[28,.60]],
+   tack:[[3,.65],[16,.65],[20,.70],[25,.85],[28,.92]],
+   hal:[[3,.78],[12,.80],[20,.84],[28,.88]]},
  run:{main:[[3,.52],[6,.50],[12,.45],[18,.42],[28,.36]],
    vang:[[3,.34],[8,.52],[12,.64],[18,.78],[28,.88]],
    cun:[[3,0],[8,.06],[12,.20],[18,.48],[28,.80]],
@@ -556,7 +612,10 @@ var TARGETS={
    lead:[[3,.70],[8,.80],[12,.86],[18,.92],[28,.96]],
    caps:[[3,.18],[8,.30],[12,.46],[18,.68],[28,.88]],
    lowers:[[3,.74],[8,.70],[12,.64],[18,.52],[28,.38]],
-   forestay:[[3,.06],[8,.11],[12,.18],[18,.32],[28,.56]]}};
+   forestay:[[3,.06],[8,.11],[12,.18],[18,.32],[28,.56]],
+   kite:[[3,.90],[6,.88],[9,.83],[12,.73],[16,.67],[20,.63],[28,.58]],
+   tack:[[3,0],[12,0],[16,.45],[20,.90],[28,1]],
+   hal:[[3,.45],[20,.45],[25,.65],[28,.70]]}};
 function curve(pts,x){
   if(x<=pts[0][0])return pts[0][1];
   for(var i=1;i<pts.length;i++){if(x<=pts[i][0]){var a=pts[i-1],b=pts[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}}
@@ -617,6 +676,36 @@ function model(s){
   var idealAoA=4+.55*dMid+aoaBonus;
   var aoaMid=awMid.ang-(boomAng+twist*.48)-(up?2.5:2.0);
 
+  /* ── the kite ──────────────────────────────────────────────────────────
+     Up off the wind only. A spinnaker is flown on the edge of collapse: ease
+     until the luff curls, then take back just enough to stop it. Under-trimmed
+     it folds and stops working; over-trimmed it stops being a wing. */
+  var kiteUp=!up, deep=up?0:(reach?.30:1);
+  var kiteDepth=0,kiteAoA=0,kiteIdeal=0,kiteMargin=0,collapse=0,kstall=0,kiteEff=0,cKite=0,kiteAng=0,nosedive=0;
+  if(kiteUp){
+    kiteDepth=17+5*(1-s.tack)+1.2*(1-s.hal);
+    var kiteMax=clamp(awMid.ang+14,22,150);
+    kiteAng=kiteMax*(1-.72*s.kite);
+    kiteAoA=awMid.ang-kiteAng;
+    /* reaching, a kite flies like a big genoa at low incidence; running deep it is
+       most of the way to a drag device. The angle it wants tracks that. */
+    kiteIdeal=clamp(9+22*deep+.14*kiteDepth,8,52);
+    /* in a drifter the boat cannot make enough apparent wind to fly the kite at the
+       angle it would like — which is exactly why you sail higher to keep it full */
+    kiteIdeal=Math.min(kiteIdeal,.72*awMid.ang-5);
+    kiteMargin=kiteAoA-kiteIdeal;
+    collapse=clamp((-kiteMargin-3)/11,0,1);
+    kstall=clamp((kiteMargin-7)/16,0,1);
+    kiteEff=(1-collapse)*(1-.5*kstall);
+    /* eased tack projects area to windward when deep; a straight luff is what a
+       reach wants. Same story for the halyard, at about half the strength. */
+    /* a high tack projects area to windward when deep, but on a reach it just lets
+       the luff sag away and makes the sail hard to keep on the edge */
+    var kiteProj=1+.18*deep*(1-s.tack)-.42*(1-deep)*(1-s.tack);
+    var halF=1-.13*Math.abs((1-s.hal)-.55*deep);
+    cKite=(kiteDepth/21)*kiteEff*kiteProj*halF;
+  }
+
   var camber=(dLow*1.15+dMid+dTop*.75)/2.9;
   var sag=clamp((.45+.55*st)*(1-.78*rigEq),.02,1.3);
   var sagCm=3+sag*20;
@@ -635,8 +724,11 @@ function model(s){
   var twistSpill=1-(up?.0135:.024)*Math.max(0,twist-6);
   var cMain=(camber/11)*twistSpill;
   var cJib=(jibDepth/10)*(1-.010*Math.max(0,jibTwist-8));
-  var cTot=clamp(.66*cMain+.34*cJib,.15,1.9)*(1-.30*backwind);
-  var aero=cTot*q*(up?1:reach?1.30:1.10)*(1-.16*rakeEq);
+  var cTot=kiteUp?clamp(.42*cMain+.14*cJib+.44*cKite,.15,2.4)*(1-.30*backwind)
+                 :clamp(.66*cMain+.34*cJib,.15,1.9)*(1-.30*backwind);
+  var aero=cTot*q*(up?1:reach?1.62:1.42)*(1-.16*rakeEq);
+  /* a big kite, tack up, loaded in a breeze, is what puts the bow under */
+  if(kiteUp)nosedive=clamp((aero*(.45+.55*deep)*(.55+.45*(1-s.tack))-2.35)/1.9,0,1);
 
   /* the share of the aero force that acts sideways rather than forwards */
   var sideFrac=up?1:reach?.80:.50;
@@ -649,9 +741,9 @@ function model(s){
   var stallPen=.5*clamp((1.25-flowE)*(1-twist/20),0,1);
   var draftErr=Math.max(0,draft-draftIdeal)+.45*Math.max(0,draftIdeal-draft);
   /* no saturation point: past the limit, every extra scrap of power keeps costing */
-  var eff=clamp(1-.30*backwind-.016*draftErr-.26*clamp(heelRatio-1,0,3.2)
-        -(up?.14:.05)*clamp(sag/.9,0,1)-stallPen-trimPen-dragPen,.12,1);
-  var usable=Math.min(aero,RIGHT+.2*Math.max(0,aero-RIGHT));
+  var eff=clamp(1-.30*backwind-.016*draftErr-(up?.26:.13)*clamp(heelRatio-1,0,3.2)
+        -(up?.14:.05)*clamp(sag/.9,0,1)-stallPen-trimPen-dragPen-.24*nosedive,.12,1);
+  var usable=Math.min(aero,RIGHT+(up?.2:.55)*Math.max(0,aero-RIGHT));
   var speedIdx=usable*eff;
 
   var pointing=clamp(100*(.42+.30*(1-clamp(sag/.85,0,1))+.22*(1-clamp(draftErr/16,0,1))
@@ -663,11 +755,13 @@ function model(s){
     leechCmd:leechCmd,leechEff:leechEff,bend:bend,twist:twist,dLow:dLow,dMid:dMid,dTop:dTop,draft:draft,
     sag:sag,sagCm:sagCm,jibDepth:jibDepth,jibDraft:jibDraft,jibTwist:jibTwist,jibAng:jibAng,
     slotOpen:slotOpen,backwind:backwind,aero:aero,heelRatio:heelRatio,eff:eff,speedIdx:speedIdx,
-    pointing:pointing,helm:helm,draftIdeal:draftIdeal,aoaBonus:aoaBonus,rigEq:rigEq,rakeEq:rakeEq,boatSpeed:boatSpeed,camber:camber,up:up};
+    pointing:pointing,helm:helm,draftIdeal:draftIdeal,aoaBonus:aoaBonus,rigEq:rigEq,rakeEq:rakeEq,
+    kiteUp:kiteUp,kiteDepth:kiteDepth,kiteAng:kiteAng,kiteAoA:kiteAoA,kiteMargin:kiteMargin,
+    collapse:collapse,kstall:kstall,kiteEff:kiteEff,cKite:cKite,nosedive:nosedive,deep:deep,boatSpeed:boatSpeed,camber:camber,up:up};
 }
 
 /* ════════ state ════════ */
-var S={wind:12,mode:"upwind",main:.62,vang:.24,cun:.05,out:.38,jib:.66,lead:.34,caps:.40,lowers:.62,forestay:.20};
+var S={wind:12,mode:"upwind",main:.62,vang:.24,cun:.05,out:.38,jib:.66,lead:.34,caps:.40,lowers:.62,forestay:.20,kite:.55,tack:.45,hal:.75};
 var selected="main", demo=null;
 var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -675,8 +769,15 @@ var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce
 var rangeEls={},deltaEls={},targetEls={},valEls={},rowEls={};
 (function(){
   var host=el("ctrls");
+  var kiteHdrDone=false;
   CONTROLS.forEach(function(c){
-    var row=document.createElement("div"); row.className="ctrl"; row.dataset.k=c.k;
+    if(c.kite&&!kiteHdrDone){
+      kiteHdrDone=true;
+      var h=document.createElement("div"); h.className="grp"; h.id="kite-grp";
+      h.innerHTML='<span class="eyebrow">The kite</span><span class="rule"></span><span class="grp-note" id="kite-note"></span>';
+      host.appendChild(h);
+    }
+    var row=document.createElement("div"); row.className="ctrl"+(c.kite?" kitectrl":""); row.dataset.k=c.k;
     row.innerHTML='<div class="ctrl-hd"><button type="button" class="ctrl-name">'+c.name+'</button>'+
       '<span class="ctrl-val"><span class="n mono">0</span><span class="d mono"></span></span></div>'+
       '<div class="slot"><span class="target"></span></div>'+
@@ -713,16 +814,16 @@ var tileEls={};
       (t.bar?'<span class="bar"><i style="width:0%"></i><span class="limit" style="left:64%"></span></span>':'')+
       '<span class="n">…</span>';
     host.appendChild(d);
-    tileEls[t.k]={v:d.querySelector(".v"),n:d.querySelector(".n"),bar:t.bar?d.querySelector(".bar i"):null};
+    tileEls[t.k]={k:d.querySelector(".k"),v:d.querySelector(".v"),n:d.querySelector(".n"),bar:t.bar?d.querySelector(".bar i"):null};
   });
 })();
 
 /* ════════ rig elevation geometry ════════ */
-var BASE={x:140,y:388}, BOW={x:22,y:376}, DECKY=388;
+var BASE={x:176,y:388}, BOW={x:58,y:376}, DECKY=388, SPRIT={x:16,y:378};
 function qpt(p0,p1,p2,t){var u=1-t;return{x:u*u*p0.x+2*u*t*p1.x+t*t*p2.x, y:u*u*p0.y+2*u*t*p1.y+t*t*p2.y}}
 function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)}).join(" ")}
 (function(){
-  el("hull").setAttribute("d","M14 388 L282 388 L268 400 L34 402 Z");
+  el("hull").setAttribute("d","M50 388 L318 388 L304 400 L70 402 Z");
   var L=el("rig-labels");
   ["bendlbl","saglbl","riglbl"].forEach(function(id,i){
     var t=mk("text",{id:id,class:"s-lbl",x:0,y:0}); L.appendChild(t);
@@ -791,6 +892,48 @@ function renderRig(m){
   lw.setAttribute("d","M"+spr.x.toFixed(1)+" "+spr.y.toFixed(1)+"L"+chainB.x.toFixed(1)+" "+chainB.y);
   lw.setAttribute("stroke-width",(.9+S.lowers*1.9).toFixed(2));
   lw.setAttribute("opacity",(.3+S.lowers*.7).toFixed(2));
+
+  /* ── bowsprit and kite ── */
+  var kEls=["kite","kiteluff","sprit","tackline"];
+  if(m.kiteUp){
+    kEls.forEach(function(id){el(id).setAttribute("display","")});
+    el("sprit").setAttribute("d","M"+BOW.x+" "+(BOW.y+4)+"L"+SPRIT.x+" "+SPRIT.y);
+    /* tack rides up the luff as the tack line is eased */
+    var tack={x:SPRIT.x+4, y:SPRIT.y-58*(1-S.tack)};
+    var head=mastPt(.93);
+    head={x:head.x-6-10*(1-S.hal), y:head.y+6+16*(1-S.hal)};
+    var clew={x:BOW.x+116, y:BOW.y-140};
+    /* belly of the kite: fuller with the tack up and the halyard eased */
+    var fullness=(m.kiteDepth-16)/9;
+    var lc={x:(tack.x+head.x)/2-16-16*fullness, y:(tack.y+head.y)/2};
+    var lech={x:(head.x+clew.x)/2+30+12*fullness, y:(head.y+clew.y)/2-10};
+    var foot={x:(clew.x+tack.x)/2+2, y:(clew.y+tack.y)/2+26+16*fullness};
+    el("kite").setAttribute("d",
+      "M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+
+      "Q"+lc.x.toFixed(1)+" "+lc.y.toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1)+
+      "Q"+lech.x.toFixed(1)+" "+lech.y.toFixed(1)+" "+clew.x.toFixed(1)+" "+clew.y.toFixed(1)+
+      "Q"+foot.x.toFixed(1)+" "+foot.y.toFixed(1)+" "+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+"Z");
+    /* the luff folds back on itself when the sheet is too far out */
+    var cl=m.collapse, lp=el("kiteluff");
+    if(cl>.06){
+      var f=18*cl, mx=(tack.x+head.x)/2-16-16*fullness;
+      lp.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+
+        "Q"+(mx+f*1.9).toFixed(1)+" "+((tack.y+head.y)/2).toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1));
+      lp.setAttribute("stroke",cl>.5?"var(--load-3)":"var(--load-2)");
+      lp.setAttribute("opacity","1");
+    } else {
+      lp.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+
+        "Q"+lc.x.toFixed(1)+" "+lc.y.toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1));
+      lp.setAttribute("stroke","var(--flow)"); lp.setAttribute("opacity",".9");
+    }
+    el("kite").setAttribute("fill-opacity",(.06+.16*m.kiteEff).toFixed(3));
+    var tl=el("tackline");
+    tl.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+"L"+(SPRIT.x+4)+" "+SPRIT.y);
+    tl.setAttribute("stroke-width",(1+S.tack*1.8).toFixed(2));
+    tl.setAttribute("opacity",(.3+S.tack*.7).toFixed(2));
+  } else {
+    kEls.forEach(function(id){el(id).setAttribute("display","none")});
+  }
 
   var vangBoom={x:goose.x+34,y:goose.y+boomDy*.29};
   var vangBase=mastPt(.045);
@@ -958,7 +1101,7 @@ function renderSections(m){
 /* ════════ diagnostics ════════ */
 function diagnose(m,b,tgt){
   var d=[],W=S.wind,up=S.mode==="upwind";
-  var deltas=CK.map(function(k){return Math.abs(tgt[k]-S[k])});
+  var deltas=activeKeys().map(function(k){return Math.abs(tgt[k]-S[k])});
   var worst=Math.max.apply(null,deltas), onTgt=worst<.14;
   if(m.backwind>.3)d.push([m.backwind>.6?3:2,"crit","The jib is <b>backwinding the main</b> — the slot is choked and the front of the mainsail is working in dirty air. Ease the jib sheet or move the lead aft."]);
   if(m.draft>m.draftIdeal+5)d.push([m.draft>m.draftIdeal+10?3:2,m.draft>m.draftIdeal+10?"crit":"warn","Draft has slid to <b>"+fmt(m.draft)+"% aft</b>. The leech is hooking, which is drag pointed sideways plus weather helm. Pull cunningham on until it is back near "+fmt(m.draftIdeal)+"%."]);
@@ -969,6 +1112,12 @@ function diagnose(m,b,tgt){
   if(m.heelRatio<.55&&W<13&&!onTgt)d.push([2,"warn","<b>Underpowered.</b> You are carrying tension the breeze has not asked for. Cunningham off, outhaul off, soften the vang and let the sail get fat."]);
   if(up&&m.sagCm>13)d.push([2,"warn","Forestay sagging <b>"+fmt(m.sagCm)+" cm</b>. That is a round, powerful jib entry — lovely in waves, but it will not point. Wind the caps on."]);
   if(m.helm>4.3&&!onTgt)d.push([2,"warn","<b>"+fmt(m.helm,1)+"° of weather helm.</b> The rudder is half on all the way up the beat, which is a brake you are steering with."]);
+  if(m.kiteUp&&m.collapse>.25)d.push([m.collapse>.55?3:2,m.collapse>.55?"crit":"warn","<b>The kite luff has folded in.</b> You are past the curl and it has stopped pulling — that is not a soft setting, it is no setting. Trim on until the fold just disappears, then let it back to a curl."]);
+  if(m.kiteUp&&m.kstall>.35)d.push([2,"warn","Kite is <b>over-trimmed</b> — the luff is nowhere near curling and the sail is a wall rather than a wing. Ease until it just breaks, then take back the smallest amount you can."]);
+  if(m.kiteUp&&m.nosedive>.55)d.push([m.nosedive>.8?3:2,m.nosedive>.8?"crit":"warn","<b>You are going to bury the bow.</b> That much kite, tack up, in "+fmt(W)+" knots puts the load high and a long way forward. Tack line on, crew back, and be ready to dump the sheet."]);
+  if(m.kiteUp&&W>=24)d.push([1,"warn","At "+fmt(W)+" knots this is drop-the-kite territory as much as a trim question. If it stays up, the tack comes right down, the sheet never gets cleated, and someone has a knife."]);
+  if(m.kiteUp&&S.mode==="run"&&S.tack>.6)d.push([1,"warn","Running deep with the tack strapped down. Ease the tack line and let the kite float up and rotate to windward — that is projected area you are leaving on the sprit."]);
+  if(m.kiteUp&&S.mode==="reach"&&S.tack<.4)d.push([1,"warn","Tight reaching with the tack eased. The luff wants to be straight and tight at these angles — pull the tack down to the sprit."]);
   if(S.lowers>.62&&m.heelRatio>1.45)d.push([2,"warn","The lowers are still hard on, so the mast is being held straight and the bottom of the main is <b>"+fmt(m.dLow,1)+"% deep</b> in "+fmt(W)+" knots. Ease them and let the middle bow forward."]);
   if(S.lowers<.3&&W<9)d.push([1,"warn","Lowers this slack in light air let the mast bend and pull the luff round out of the sail — you are flattening the bottom of the main just when you want it fat."]);
   if(S.out>.55&&W<8)d.push([1,"warn","Outhaul on in "+fmt(W)+" knots — you have flattened the one part of the sail sitting in the least wind."]);
@@ -998,6 +1147,9 @@ function nowLine(k,m,tgt){
     case "lead": return "Jib twist is <b>"+fmt(m.jibTwist)+"°</b>. Forward moves load into the leech, aft moves it into the foot.";
     case "caps": return "Overall rig tension is <b>"+fmt(m.rigEq*100)+"%</b> and the forestay is sagging <b>"+fmt(m.sagCm)+" cm</b>, putting the jib draft at "+fmt(m.jibDraft)+"% aft.";
     case "lowers": return "Mast bend is <b>"+fmt(m.bend*100)+"%</b>, and the bottom of the main is "+fmt(m.dLow,1)+"% deep. "+(S.lowers>.6?"Held fairly straight.":S.lowers<.35?"Free to bow forward — that is where the flat bottom is coming from.":"Middle of the range.");
+    case "kite": return m.kiteUp?("Luff is <b>"+(m.collapse>.45?"folded — trim on":m.collapse>.06?"curling, which is right":m.kstall>.4?"nowhere near curling; ease":"just on the edge")+"</b>, and the kite is making <b>"+fmt(m.kiteEff*100)+"%</b> of the drive it could."):"In the bag. Bear away and hoist.";
+    case "tack": return m.kiteUp?("Tack is flying <b>"+fmt((1-S.tack)*100)+"% up</b> the available height, giving "+fmt(m.kiteDepth,0)+"% camber. "+(S.mode==="run"?"Running deep, high is what you want.":"Reaching, you want it further down than this.")):"Nothing to set with the kite stowed.";
+    case "hal": return m.kiteUp?("Halyard "+(S.hal>.85?"is effectively two-blocked":"is eased "+fmt((1-S.hal)*100)+"%, letting the kite fly out from the rig")+". "+(m.deep>.6?"Deep, that is worth real distance.":"On a reach you want it closer to the top.")):"Nothing to set with the kite stowed.";
     case "forestay": return "Rake is <b>"+fmt(m.rakeEq*100)+"%</b>"+(m.rakeEq>.34?", cutting the heeling lever by "+fmt(m.rakeEq*22)+"% and adding about "+fmt((m.rakeEq-.3)*2.2,1)+"° of weather helm":" — the rig is standing up, so it is adding no helm of its own")+". It has left rig tension at "+fmt(m.rigEq*100)+"%; every bit you let out here, the caps have to make back up.";
   }
   return "";
@@ -1033,7 +1185,17 @@ function render(){
     if(Math.abs(n)<9){dd.textContent="on target";dd.className="d mono ok"}
     else{dd.textContent=(n>0?"+":"")+n;dd.className="d mono hi"}
     rowEls[c.k].classList.toggle("sel",c.k===selected);
+    if(c.kite){
+      var off=S.mode==="upwind";
+      rowEls[c.k].classList.toggle("off",off);
+      rangeEls[c.k].disabled=off;
+      if(off){dd.textContent="stowed";dd.className="d mono"}
+    }
   });
+  var kg=el("kite-grp");
+  if(kg){kg.classList.toggle("off",S.mode==="upwind");
+    el("kite-note").textContent=S.mode==="upwind"?"in the bag — hoist it off the wind":
+      (S.mode==="reach"?"up and reaching":"up and running deep");}
 
   renderRig(m); renderSections(m);
 
@@ -1046,10 +1208,26 @@ function render(){
   T.draft.n.textContent=m.draft>m.draftIdeal+3.5?"Aft of where you want it — leech hooking":m.draft<m.draftIdeal-3.5?"Forward — entry going flat":"Where it should be, near "+fmt(m.draftIdeal)+"%";
   T.twist.v.textContent=fmt(m.twist,1)+"°";
   T.twist.n.textContent="This breeze wants about "+fmt(b.twist,1)+"°";
-  T.shear.v.textContent=fmt(m.shear,1)+"°";
-  T.shear.n.textContent="Apparent wind swings "+fmt(m.shear,1)+"° aft between foot and head — the twist you owe the wind";
-  T.sag.v.textContent=fmt(m.sagCm)+"cm";
-  T.sag.n.textContent=m.sagCm>13?"Round, powerful jib entry — will not point":"Straight enough to point";
+  if(m.kiteUp){
+    T.shear.k.textContent="Kite luff";
+    T.shear.v.textContent=(m.kiteMargin>0?"+":"")+fmt(m.kiteMargin,1)+"°";
+    T.shear.v.style.color=m.collapse>.3?"var(--load-3)":m.kstall>.35?"var(--load-2)":"var(--flow)";
+    T.shear.n.textContent=m.collapse>.45?"Folded — past the curl, it has stopped working":
+      m.collapse>.06?"Curling on the luff — right where you want it":
+      m.kstall>.4?"Over-trimmed — a wall, not a wing":
+      m.kstall>.12?"A shade tight; ease until it just curls":"Setting cleanly, on the edge";
+    T.sag.k.textContent="Kite drive";
+    T.sag.v.textContent=fmt(m.kiteEff*100)+"%";
+    T.sag.v.style.color=m.kiteEff>.85?"var(--flow)":m.kiteEff>.6?"var(--load-2)":"var(--load-3)";
+    T.sag.n.textContent="of what this kite could be making at "+fmt(m.kiteDepth,0)+"% camber";
+  } else {
+    T.shear.k.textContent="AW shear";
+    T.shear.v.textContent=fmt(m.shear,1)+"°"; T.shear.v.style.color="";
+    T.shear.n.textContent="Apparent wind swings "+fmt(m.shear,1)+"° aft between foot and head — the twist you owe the wind";
+    T.sag.k.textContent="Forestay sag";
+    T.sag.v.textContent=fmt(m.sagCm)+"cm"; T.sag.v.style.color="";
+    T.sag.n.textContent=m.sagCm>13?"Round, powerful jib entry — will not point":"Straight enough to point";
+  }
   T.power.v.textContent=fmt(m.heelRatio*100)+"%";
   T.power.bar.style.width=clamp(m.heelRatio/1.9,0,1)*100+"%";
   T.power.bar.style.background=m.heelRatio>1.25?"var(--load-3)":m.heelRatio>1?"var(--load-2)":"var(--flow)";
@@ -1086,21 +1264,28 @@ Array.prototype.forEach.call(document.querySelectorAll(".modes button"),function
   });
 });
 function animateTo(target,ms,done){
-  var from={},t0=null,keys=CK.slice();
+  var from={},t0=null,keys=CK.slice(),finished=false;
   keys.forEach(function(k){from[k]=S[k]});
-  if(reduce){keys.forEach(function(k){S[k]=target[k]});render();if(done)done();return}
+  function finish(){
+    if(finished)return; finished=true;
+    keys.forEach(function(k){S[k]=target[k]}); render(); if(done)done();
+  }
+  if(reduce){finish();return}
   function step(ts){
+    if(finished)return;
     if(t0===null)t0=ts;
     var p=clamp((ts-t0)/ms,0,1),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
     keys.forEach(function(k){S[k]=from[k]+(target[k]-from[k])*e});
     render();
-    if(p<1)requestAnimationFrame(step); else if(done)done();
+    if(p<1)requestAnimationFrame(step); else finish();
   }
   requestAnimationFrame(step);
+  /* a backgrounded tab pauses rAF entirely — make sure the controls still land */
+  setTimeout(finish,ms+500);
 }
 el("btn-auto").addEventListener("click",function(){stopDemo();animateTo(targetState(S),900)});
 el("btn-soft").addEventListener("click",function(){stopDemo();
-  animateTo({main:.45,vang:.08,cun:0,out:.15,jib:.45,lead:.3,caps:.15,lowers:.35,forestay:.08},700)});
+  animateTo({main:.45,vang:.08,cun:0,out:.15,jib:.45,lead:.3,caps:.15,lowers:.35,forestay:.08,kite:.35,tack:.3,hal:.6},700)});
 
 /* ════════ the breeze demo ════════ */
 var CAP0=el("demo-cap").innerHTML;

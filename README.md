@@ -8,7 +8,7 @@ step, no dependencies. Fonts load from Google Fonts; everything else runs offlin
 
 ## What it does
 
-Nine controls drive a live aerodynamic model:
+Twelve controls drive a live aerodynamic model — nine on the rig, three on the kite:
 
 | | |
 |---|---|
@@ -21,6 +21,12 @@ Nine controls drive a live aerodynamic model:
 | **Cap shrouds** | overall rig tension → forestay sag; compression → bend |
 | **Lowers (mid-mast)** | how far the middle of the mast can bow forward |
 | **Forestay** | length, so rake — and it bleeds tension back out of the caps |
+| **Kite sheet** | flown on the edge of collapse: ease to the curl, then stop |
+| **Kite tack line** | how high the tack floats — projected area deep, straight luff reaching |
+| **Kite halyard** | lets the sail fly out of the mainsail's dirty air |
+
+The kite is up on Reaching and Downwind and stowed Upwind, where its three controls
+grey out.
 
 Rig tension and rake are *derived*, not controls, because that is how the boat works: you
 adjust three wires and those two things are what you are left with.
@@ -51,6 +57,11 @@ Simplified relationships chosen so the couplings between controls are visible an
 in direction — pressure scales with wind², load moves draft aft and opens the leech, sag
 rounds the jib entry, mast bend flattens the lower main and takes luff round out of it,
 tension holds shape. It is not a velocity prediction program.
+
+The kite is flown the way a kite is actually flown. Nothing in the code says "ease to
+the curl" — but run a search for the fastest kite trim at any wind speed and it lands on
+a luff angle about 2-3° below the collapse point, in every mode, every time. Downwind the
+binding constraint is not heel but burying the bow, and the model is built that way.
 
 It was checked numerically rather than by eye. At the recommended settings across 4–25
 knots, draft stays pinned near 46% while camber falls 11.9% → 7.6% and twist traces a U
