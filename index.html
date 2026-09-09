@@ -94,6 +94,14 @@ h3{font-size:16px;font-weight:700}
 /* ── layout ─────────────────────────────────────────────── */
 .bay{display:grid;grid-template-columns:1.02fr 1.12fr .96fr;gap:14px;align-items:start}
 @media(max-width:1080px){.bay{grid-template-columns:1fr 1fr}.bay .ctrlcard{grid-column:1/-1}}
+/* the control bank is far taller than the drawings; pin the drawings so you can see
+   what a string is doing while you are reaching for it */
+@media(min-width:1081px){
+  .bay > .card:not(.ctrlcard){position:sticky;top:12px}
+}
+@media(min-width:721px) and (max-width:1080px){
+  .ctrlcard .card-bd{max-height:56vh;overflow-y:auto;overscroll-behavior:contain}
+}
 @media(max-width:720px){.bay{grid-template-columns:1fr}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:3px;box-shadow:var(--shadow)}
 .card-hd{display:flex;align-items:center;gap:10px;padding:11px 14px 9px;border-bottom:1px solid var(--line-soft)}
@@ -483,9 +491,9 @@ tr:last-child td{border-bottom:0}
       <p class="prose" style="font-size:15.5px">Eased, the tack floats up off the sprit and the whole sail lifts and rotates to windward — more area projected where the wind actually is, which is what running deep is about. Pulled down, the luff goes straight and tight and the sail holds its shape at the sharper angles a reach demands. The model will show you the camber moving as you slide it: roughly 23% deep with the tack flying, 18% with it strapped down. And in a lot of breeze, a high tack is also precisely what puts the load high and forward — which is to say, what buries the bow.</p>
     </div></div>
     <div class="card"><div class="card-bd">
-      <span class="tag mono" style="color:var(--flow);font-size:10.5px">HALYARD &amp; ANGLES</span>
-      <h3 style="margin:6px 0 8px">Let it go and find its own wind</h3>
-      <p class="prose" style="font-size:15.5px">Easing the halyard a few inches lets the whole sail fly away from the rig and out of the mainsail's dirty air — worth real distance deep, not worth the instability on a tight reach. And watch the apparent wind readout as you bear away: sailing deep in a 14, boat speed eats the true wind, and the apparent can drop to a fraction of it. That is why you do not sail dead downwind. <b>You gybe through angles, trading distance for pressure</b>, and the kite tells you when you have gone too deep by getting soft and hard to keep on the curl.</p>
+      <span class="tag mono" style="color:var(--flow);font-size:10.5px">ANGLES</span>
+      <h3 style="margin:6px 0 8px">You gybe through them</h3>
+      <p class="prose" style="font-size:15.5px">Watch the apparent wind readout as you bear away: sailing deep in a 14, boat speed eats the true wind and the apparent can drop to a fraction of it. That is why you do not sail dead downwind. <b>You gybe through angles, trading distance for pressure</b>, and the kite tells you when you have gone too deep by going soft and refusing to sit on a curl. As for the halyard — it goes to the top and stays there. Easing it to let the sail fly clear of the rig is a symmetric-kite trick from boats that genuinely do run dead square; an asymmetric tensions its luff between head and tack, so a low hoist just lets the luff sag.</p>
     </div></div>
   </div>
   <div class="note">
@@ -559,6 +567,10 @@ var CONTROLS=[
   blurb:"The shrouds that land at the spreaders — lowers, intermediates or diamonds depending on how your rig is built. They own the middle of the mast: on hard, the middle is held straight; off, it is free to bow forward. This is your most direct handle on mast bend, and so on how full the bottom half of the main is.",
   light:"On. A straight mast leaves the luff round in the sail and the bottom half stays deep and powerful.",
   heavy:"Ease them and let the middle bow forward — the mast pulls luff round out of the sail and the lower main goes flat. Not so slack that it can over-bend or invert in a gust, though; that is how masts break."},
+ {k:"forestay",name:"Forestay",lo:"short · rig upright",hi:"long · raked aft",
+  blurb:"Mostly a <em>length</em> control rather than a tension one. Let it out and the whole rig leans aft — that is rake. Its tension is not really yours to set directly: it is whatever the caps leave it. That is why these two never feel independent.",
+  light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
+  heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."},
  {k:"kite",name:"Kite sheet",kite:1,lo:"eased · luff folds",hi:"strapped in",
   blurb:"The string you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
   light:"Ease and ease again. In light air the curl is your only instrument, and the sheet load is so low that you have to work to feel it at all.",
@@ -566,15 +578,7 @@ var CONTROLS=[
  {k:"tack",name:"Kite tack line",kite:1,lo:"eased · tack flies high",hi:"on hard · down to the sprit",
   blurb:"Sets how high the tack floats above the end of the bowsprit. Eased, the whole sail lifts and rotates to windward, so it projects more area where you want it when running deep. Pulled down, the luff goes straight and tight, which is what you want when you are reaching and the apparent wind is forward.",
   light:"Ease it and let the kite float up and away — you are looking for projected area, not a tight luff.",
-  heavy:"Deep, still eased; tight reaching, pull it down. Note that a high tack in a lot of breeze is also what buries the bow."},
- {k:"hal",name:"Kite halyard",kite:1,lo:"eased · flying free",hi:"two-blocked",
-  blurb:"Hoist tension. Easing a few inches lets the whole sail fly further from the rig and out of the mainsail's dirty air — worth real distance when you are deep. Two-blocked keeps it stable and the luff straight, which is what a tight reach wants.",
-  light:"Deep and light: ease it and let the kite go and find clean air of its own.",
-  heavy:"Closer to two-blocked. A kite flying loose in a breeze is an unstable kite, and instability off the wind in a 14 is expensive."},
- {k:"forestay",name:"Forestay",lo:"short · rig upright",hi:"long · raked aft",
-  blurb:"Mostly a <em>length</em> control rather than a tension one. Let it out and the whole rig leans aft — that is rake. Its tension is not really yours to set directly: it is whatever the caps leave it. That is why these two never feel independent.",
-  light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
-  heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."}
+  heavy:"Deep, still eased; tight reaching, pull it down. Note that a high tack in a lot of breeze is also what buries the bow."}
 ];
 var CK=CONTROLS.map(function(c){return c.k});
 var KITEK=CONTROLS.filter(function(c){return c.kite}).map(function(c){return c.k});
@@ -591,7 +595,7 @@ var TARGETS={
    caps:[[3,.15],[6,.24],[9,.40],[12,.54],[15,.66],[18,.78],[22,.90],[28,1]],
    lowers:[[3,.70],[6,.68],[9,.62],[12,.55],[15,.46],[18,.36],[22,.28],[28,.22]],
    forestay:[[3,.09],[6,.14],[9,.24],[12,.35],[15,.48],[18,.62],[22,.80],[28,.96]],
-   kite:[[3,0],[28,0]],tack:[[3,0],[28,0]],hal:[[3,0],[28,0]]},
+   kite:[[3,0],[28,0]],tack:[[3,0],[28,0]]},
  reach:{main:[[3,.62],[8,.66],[12,.62],[18,.54],[28,.44]],
    vang:[[3,.48],[8,.56],[12,.66],[18,.80],[28,.92]],
    cun:[[3,0],[8,.10],[12,.26],[18,.56],[28,.86]],
@@ -602,8 +606,7 @@ var TARGETS={
    lowers:[[3,.72],[8,.66],[12,.58],[18,.44],[28,.30]],
    forestay:[[3,.08],[8,.14],[12,.24],[18,.44],[28,.74]],
    kite:[[3,.87],[6,.81],[9,.73],[12,.69],[16,.65],[20,.63],[28,.60]],
-   tack:[[3,.65],[16,.65],[20,.70],[25,.85],[28,.92]],
-   hal:[[3,.78],[12,.80],[20,.84],[28,.88]]},
+   tack:[[3,.65],[16,.65],[20,.70],[25,.85],[28,.92]]},
  run:{main:[[3,.52],[6,.50],[12,.45],[18,.42],[28,.36]],
    vang:[[3,.34],[8,.52],[12,.64],[18,.78],[28,.88]],
    cun:[[3,0],[8,.06],[12,.20],[18,.48],[28,.80]],
@@ -614,8 +617,7 @@ var TARGETS={
    lowers:[[3,.74],[8,.70],[12,.64],[18,.52],[28,.38]],
    forestay:[[3,.06],[8,.11],[12,.18],[18,.32],[28,.56]],
    kite:[[3,.90],[6,.88],[9,.83],[12,.73],[16,.67],[20,.63],[28,.58]],
-   tack:[[3,0],[12,0],[16,.45],[20,.90],[28,1]],
-   hal:[[3,.45],[20,.45],[25,.65],[28,.70]]}};
+   tack:[[3,0],[12,0],[16,.45],[20,.90],[28,1]]}};
 function curve(pts,x){
   if(x<=pts[0][0])return pts[0][1];
   for(var i=1;i<pts.length;i++){if(x<=pts[i][0]){var a=pts[i-1],b=pts[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}}
@@ -683,7 +685,7 @@ function model(s){
   var kiteUp=!up, deep=up?0:(reach?.30:1);
   var kiteDepth=0,kiteAoA=0,kiteIdeal=0,kiteMargin=0,collapse=0,kstall=0,kiteEff=0,cKite=0,kiteAng=0,nosedive=0;
   if(kiteUp){
-    kiteDepth=17+5*(1-s.tack)+1.2*(1-s.hal);
+    kiteDepth=17+5*(1-s.tack);
     var kiteMax=clamp(awMid.ang+14,22,150);
     kiteAng=kiteMax*(1-.72*s.kite);
     kiteAoA=awMid.ang-kiteAng;
@@ -698,12 +700,13 @@ function model(s){
     kstall=clamp((kiteMargin-7)/16,0,1);
     kiteEff=(1-collapse)*(1-.5*kstall);
     /* eased tack projects area to windward when deep; a straight luff is what a
-       reach wants. Same story for the halyard, at about half the strength. */
+       reach wants. (The halyard is not a variable here — it is two-blocked and stays
+       there; see the notes under "Flying the kite".) */
     /* a high tack projects area to windward when deep, but on a reach it just lets
        the luff sag away and makes the sail hard to keep on the edge */
     var kiteProj=1+.18*deep*(1-s.tack)-.42*(1-deep)*(1-s.tack);
-    var halF=1-.13*Math.abs((1-s.hal)-.55*deep);
-    cKite=(kiteDepth/21)*kiteEff*kiteProj*halF;
+
+    cKite=(kiteDepth/21)*kiteEff*kiteProj;
   }
 
   var camber=(dLow*1.15+dMid+dTop*.75)/2.9;
@@ -761,7 +764,7 @@ function model(s){
 }
 
 /* ════════ state ════════ */
-var S={wind:12,mode:"upwind",main:.62,vang:.24,cun:.05,out:.38,jib:.66,lead:.34,caps:.40,lowers:.62,forestay:.20,kite:.55,tack:.45,hal:.75};
+var S={wind:12,mode:"upwind",main:.62,vang:.24,cun:.05,out:.38,jib:.66,lead:.34,caps:.40,lowers:.62,forestay:.20,kite:.55,tack:.45};
 var selected="main", demo=null;
 var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -900,14 +903,13 @@ function renderRig(m){
     el("sprit").setAttribute("d","M"+BOW.x+" "+(BOW.y+4)+"L"+SPRIT.x+" "+SPRIT.y);
     /* tack rides up the luff as the tack line is eased */
     var tack={x:SPRIT.x+4, y:SPRIT.y-58*(1-S.tack)};
-    var head=mastPt(.93);
-    head={x:head.x-6-10*(1-S.hal), y:head.y+6+16*(1-S.hal)};
+    var head=mastPt(.93); head={x:head.x-6, y:head.y+6};
     var clew={x:BOW.x+116, y:BOW.y-140};
-    /* belly of the kite: fuller with the tack up and the halyard eased */
-    var fullness=(m.kiteDepth-16)/9;
-    var lc={x:(tack.x+head.x)/2-16-16*fullness, y:(tack.y+head.y)/2};
-    var lech={x:(head.x+clew.x)/2+30+12*fullness, y:(head.y+clew.y)/2-10};
-    var foot={x:(clew.x+tack.x)/2+2, y:(clew.y+tack.y)/2+26+16*fullness};
+    /* belly of the kite — fuller with the tack up */
+    var fullness=clamp((m.kiteDepth-16)/6,0,1.1);
+    var lc=bulge(tack,head,-(30+24*fullness));
+    var lech=bulge(head,clew,-(46+26*fullness));
+    var foot=bulge(clew,tack,-(38+26*fullness));
     el("kite").setAttribute("d",
       "M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+
       "Q"+lc.x.toFixed(1)+" "+lc.y.toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1)+
@@ -916,9 +918,9 @@ function renderRig(m){
     /* the luff folds back on itself when the sheet is too far out */
     var cl=m.collapse, lp=el("kiteluff");
     if(cl>.06){
-      var f=18*cl, mx=(tack.x+head.x)/2-16-16*fullness;
+      var fold=bulge(tack,head,-(30+24*fullness)+52*cl);
       lp.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+
-        "Q"+(mx+f*1.9).toFixed(1)+" "+((tack.y+head.y)/2).toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1));
+        "Q"+fold.x.toFixed(1)+" "+fold.y.toFixed(1)+" "+head.x.toFixed(1)+" "+head.y.toFixed(1));
       lp.setAttribute("stroke",cl>.5?"var(--load-3)":"var(--load-2)");
       lp.setAttribute("opacity","1");
     } else {
@@ -982,6 +984,13 @@ function place(pts,ox,oy,deg,dy){
   var r=deg*Math.PI/180,c=Math.cos(r),s=Math.sin(r);dy=dy||0;
   return pts.map(function(q){var x=q[0],y=q[1]+dy;return{x:ox+x*c-y*s,y:oy+x*s+y*c}});
 }
+/* control point for a quadratic that passes through the straight line's midpoint
+   pushed `amt` along the left-hand normal — gives predictable belly */
+function bulge(A,B,amt){
+  var dx=B.x-A.x, dy=B.y-A.y, L=Math.sqrt(dx*dx+dy*dy)||1;
+  var tx=(A.x+B.x)/2-dy/L*amt, ty=(A.y+B.y)/2+dx/L*amt;
+  return {x:2*tx-(A.x+B.x)/2, y:2*ty-(A.y+B.y)/2};
+}
 function arrowPath(sx,sy,ang,len){
   var r=ang*Math.PI/180,ex=sx+len*Math.cos(r),ey=sy+len*Math.sin(r),h=6.5;
   var a1=(ang+150)*Math.PI/180,a2=(ang-150)*Math.PI/180;
@@ -993,10 +1002,10 @@ function arrowPath(sx,sy,ang,len){
   var host=el("sec-body");
   ROWS.forEach(function(R){
     var g=mk("g",{}); host.appendChild(g); var e={};
-    e.band=mk("rect",{x:2,y:R.y-64,width:360,height:122,rx:2,fill:"var(--surface-2)",opacity:".5"});
+    e.band=mk("rect",{x:2,width:360,rx:2,fill:"var(--surface-2)",opacity:".5"});
     e.center=mk("path",{class:"s-line","stroke-dasharray":"2 5","stroke-width":1,opacity:".7"});
     e.wind=mk("path",{class:"s-flow","stroke-width":1.4,"stroke-linecap":"round"});
-    e.windlbl=mk("text",{class:"s-lbl",fill:"var(--flow)",x:356,y:R.y-56,"text-anchor":"end"});
+    e.windlbl=mk("text",{class:"s-lbl",fill:"var(--flow)",x:356,"text-anchor":"end"});
     e.slotlbl=mk("text",{class:"s-lbl",fill:"var(--flow)","text-anchor":"middle"});
     e.jfill=mk("path",{fill:"var(--jibfill)",stroke:"none",opacity:".9"});
     e.jline=mk("path",{fill:"none",stroke:"var(--ink-2)","stroke-width":1.5,"stroke-linecap":"round"});
@@ -1009,18 +1018,29 @@ function arrowPath(sx,sy,ang,len){
     e.ribbon=mk("path",{fill:"none","stroke-width":1.6,"stroke-linecap":"round"});
     e.slot=mk("path",{fill:"none","stroke-width":1.1,"stroke-dasharray":"2 2"});
     e.bw=mk("path",{fill:"none",stroke:"var(--load-3)","stroke-width":1.4});
-    e.name=mk("text",{class:"s-lbl2",x:6,y:R.y-56});
-    e.data=mk("text",{class:"s-lbl",x:6,y:R.y-45});
-    e.data2=mk("text",{class:"s-lbl",x:6,y:R.y-34});
-    ["band","center","wind","windlbl","jfill","jline","jchord","mfill","streak","mline","mchord","tick","ribbon","slot","slotlbl","bw","name","data","data2"]
-      .forEach(function(k){g.appendChild(e[k])});
+    e.name=mk("text",{class:"s-lbl2",x:6});
+    e.data=mk("text",{class:"s-lbl",x:6});
+    e.data2=mk("text",{class:"s-lbl",x:6});
+    ["band","name","data","data2","windlbl"].forEach(function(k){g.appendChild(e[k])});
+    var gc=mk("g",{}); g.appendChild(gc); R.gc=gc;
+    ["center","wind","jfill","jline","jchord","mfill","streak","mline","mchord","tick","ribbon","slot","slotlbl","bw"]
+      .forEach(function(k){gc.appendChild(e[k])});
     R.e=e;
   });
 })();
 
 function renderSections(m){
-  ROWS.forEach(function(R){
-    var e=R.e, y=R.y;
+  /* off the wind the boom swings a long way out, so a slice sweeps through a much
+     bigger vertical angle and needs more room than it does upwind */
+  var bandH=m.up?126:Math.min(202,140+m.boomAng*0.9), pad=9, top=8;
+  el("sec").setAttribute("viewBox","0 0 364 "+(top+3*(bandH+pad)+4));
+  ROWS.forEach(function(R,ri){
+    var e=R.e, bandTop=top+ri*(bandH+pad), y=bandTop+46+(bandH-52)/2;
+    e.band.setAttribute("y",bandTop); e.band.setAttribute("height",bandH);
+    e.name.setAttribute("y",bandTop+15);
+    e.data.setAttribute("y",bandTop+26);
+    e.data2.setAttribute("y",bandTop+37);
+    e.windlbl.setAttribute("y",bandTop+15);
     var tf=clamp((R.h-.10)/.85,0,1);
     var ang=m.boomAng+m.twist*Math.pow(tf,1.15);
     var a=m.aw(R.h);
@@ -1084,8 +1104,10 @@ function renderSections(m){
       var bwp="";
       if(m.backwind>.22){var b0=P[1];
         for(var i=0;i<3;i++)bwp+="M"+(b0.x+2+i*3).toFixed(1)+" "+(b0.y-4-i*2).toFixed(1)+"q4 -3 8 0";}
+      /* hide it outright rather than parking a point at the origin, which would
+         otherwise drag this row's measured bounding box up to y=0 */
       e.bw.setAttribute("d",bwp||"M0 0");
-      e.bw.setAttribute("opacity",m.backwind>.22?"1":"0");
+      e.bw.setAttribute("display",bwp?"":"none");
       ["jfill","jline","jchord","slot","slotlbl"].forEach(function(k){e[k].setAttribute("display","")});
     } else {
       ["jfill","jline","jchord","slot","slotlbl","bw"].forEach(function(k){e[k].setAttribute("display","none")});
@@ -1095,6 +1117,13 @@ function renderSections(m){
     e.data.textContent=fmt(depth,1)+"% deep · "+fmt(draftH)+"% aft";
     e.data2.textContent=fmt(ang-m.boomAng,1)+"° twist · "+fmt(aoa,1)+"° attack";
     e.data2.setAttribute("fill",stall>.45?"var(--load-3)":luffing>.5?"var(--load-1)":"var(--ink-3)");
+
+    /* measure what we actually drew and fit it to the band, so nothing bleeds out */
+    R.gc.setAttribute("transform","");
+    var bb=R.gc.getBBox(), availTop=bandTop+44, availH=bandH-50;
+    var sc=Math.min(1, availH/Math.max(1,bb.height));
+    var ty=(availTop+availH/2)-(bb.y+bb.height/2)*sc;
+    R.gc.setAttribute("transform","translate(0,"+ty.toFixed(1)+") scale("+sc.toFixed(4)+")");
   });
 }
 
@@ -1149,7 +1178,6 @@ function nowLine(k,m,tgt){
     case "lowers": return "Mast bend is <b>"+fmt(m.bend*100)+"%</b>, and the bottom of the main is "+fmt(m.dLow,1)+"% deep. "+(S.lowers>.6?"Held fairly straight.":S.lowers<.35?"Free to bow forward — that is where the flat bottom is coming from.":"Middle of the range.");
     case "kite": return m.kiteUp?("Luff is <b>"+(m.collapse>.45?"folded — trim on":m.collapse>.06?"curling, which is right":m.kstall>.4?"nowhere near curling; ease":"just on the edge")+"</b>, and the kite is making <b>"+fmt(m.kiteEff*100)+"%</b> of the drive it could."):"In the bag. Bear away and hoist.";
     case "tack": return m.kiteUp?("Tack is flying <b>"+fmt((1-S.tack)*100)+"% up</b> the available height, giving "+fmt(m.kiteDepth,0)+"% camber. "+(S.mode==="run"?"Running deep, high is what you want.":"Reaching, you want it further down than this.")):"Nothing to set with the kite stowed.";
-    case "hal": return m.kiteUp?("Halyard "+(S.hal>.85?"is effectively two-blocked":"is eased "+fmt((1-S.hal)*100)+"%, letting the kite fly out from the rig")+". "+(m.deep>.6?"Deep, that is worth real distance.":"On a reach you want it closer to the top.")):"Nothing to set with the kite stowed.";
     case "forestay": return "Rake is <b>"+fmt(m.rakeEq*100)+"%</b>"+(m.rakeEq>.34?", cutting the heeling lever by "+fmt(m.rakeEq*22)+"% and adding about "+fmt((m.rakeEq-.3)*2.2,1)+"° of weather helm":" — the rig is standing up, so it is adding no helm of its own")+". It has left rig tension at "+fmt(m.rigEq*100)+"%; every bit you let out here, the caps have to make back up.";
   }
   return "";
@@ -1285,7 +1313,7 @@ function animateTo(target,ms,done){
 }
 el("btn-auto").addEventListener("click",function(){stopDemo();animateTo(targetState(S),900)});
 el("btn-soft").addEventListener("click",function(){stopDemo();
-  animateTo({main:.45,vang:.08,cun:0,out:.15,jib:.45,lead:.3,caps:.15,lowers:.35,forestay:.08,kite:.35,tack:.3,hal:.6},700)});
+  animateTo({main:.45,vang:.08,cun:0,out:.15,jib:.45,lead:.3,caps:.15,lowers:.35,forestay:.08,kite:.35,tack:.3},700)});
 
 /* ════════ the breeze demo ════════ */
 var CAP0=el("demo-cap").innerHTML;

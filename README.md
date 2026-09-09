@@ -8,7 +8,7 @@ step, no dependencies. Fonts load from Google Fonts; everything else runs offlin
 
 ## What it does
 
-Twelve controls drive a live aerodynamic model — nine on the rig, three on the kite:
+Eleven controls drive a live aerodynamic model — nine on the rig, two on the kite:
 
 | | |
 |---|---|
@@ -23,10 +23,14 @@ Twelve controls drive a live aerodynamic model — nine on the rig, three on the
 | **Forestay** | length, so rake — and it bleeds tension back out of the caps |
 | **Kite sheet** | flown on the edge of collapse: ease to the curl, then stop |
 | **Kite tack line** | how high the tack floats — projected area deep, straight luff reaching |
-| **Kite halyard** | lets the sail fly out of the mainsail's dirty air |
 
-The kite is up on Reaching and Downwind and stowed Upwind, where its three controls
+The kite is up on Reaching and Downwind and stowed Upwind, where its two controls
 grey out.
+
+There is deliberately no kite halyard control. It is two-blocked and stays there — an
+asymmetric tensions its luff between head and tack, so anything less just lets the luff
+sag. Easing the halyard to fly the sail clear of the rig is a symmetric-kite technique
+from boats that genuinely run dead square, and it does not transfer to a skiff.
 
 Rig tension and rake are *derived*, not controls, because that is how the boat works: you
 adjust three wires and those two things are what you are left with.
