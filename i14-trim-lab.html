@@ -1,0 +1,1143 @@
+<meta charset="utf-8">
+<title>i14 Trim Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+/* ── tokens ─────────────────────────────────────────────── */
+:root{
+  --ground:#E4EAEC; --ground-2:#D7E0E3; --surface:#F7FBFC; --surface-2:#EDF3F5;
+  --ink:#0A1A21; --ink-2:#3B555F; --ink-3:#6D858E;
+  --line:#C2D1D6; --line-soft:#DAE4E7;
+  --flow:#00707E; --flow-2:#0A8A97; --flow-wash:rgba(0,112,126,.10);
+  --load-1:#A8862B; --load-2:#CE7223; --load-3:#B93726;
+  --sailfill:#FFFFFF; --sailfill-2:#F2F7F8; --jibfill:#E8F1F2;
+  --shadow:0 1px 2px rgba(10,26,33,.06), 0 8px 24px -18px rgba(10,26,33,.35);
+  --tick:#0A1A21; --on-flow:#F7FBFC;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#07131A; --ground-2:#0B1B23; --surface:#0F2129; --surface-2:#152B34;
+    --ink:#DEEAED; --ink-2:#9FB7BE; --ink-3:#6E8A93;
+    --line:#1F3A45; --line-soft:#182F38;
+    --flow:#41C6D6; --flow-2:#6BD8E4; --flow-wash:rgba(65,198,214,.12);
+    --load-1:#D9B44E; --load-2:#F0913F; --load-3:#F2664B;
+    --sailfill:#1B333C; --sailfill-2:#162B33; --jibfill:#1E3A44;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+    --tick:#DEEAED; --on-flow:#07131A;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#07131A; --ground-2:#0B1B23; --surface:#0F2129; --surface-2:#152B34;
+  --ink:#DEEAED; --ink-2:#9FB7BE; --ink-3:#6E8A93;
+  --line:#1F3A45; --line-soft:#182F38;
+  --flow:#41C6D6; --flow-2:#6BD8E4; --flow-wash:rgba(65,198,214,.12);
+  --load-1:#D9B44E; --load-2:#F0913F; --load-3:#F2664B;
+  --sailfill:#1B333C; --sailfill-2:#162B33; --jibfill:#1E3A44;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+  --tick:#DEEAED; --on-flow:#07131A;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+  font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1260px;margin:0 auto;padding:clamp(14px,2.6vw,30px) clamp(14px,3vw,32px) 72px}
+
+/* ── type ───────────────────────────────────────────────── */
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.018em}
+h1{font-size:clamp(29px,4.3vw,44px);font-weight:800;line-height:1.02}
+h2{font-size:clamp(19px,2.2vw,25px);font-weight:700}
+h3{font-size:16px;font-weight:700}
+.eyebrow{
+  font-family:"Archivo Narrow","Archivo Narrow Fallback",sans-serif;
+  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.15em;
+  color:var(--ink-3);
+}
+.prose{font-family:"Newsreader",Georgia,serif;font-size:16.5px;line-height:1.62;color:var(--ink-2);max-width:66ch}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{font-style:italic}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.lede{font-family:"Newsreader",Georgia,serif;font-size:clamp(16px,1.7vw,19px);line-height:1.5;color:var(--ink-2);max-width:60ch;margin:10px 0 0}
+
+/* ── header ─────────────────────────────────────────────── */
+.masthead{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;justify-content:space-between;
+  padding-bottom:18px;border-bottom:1px solid var(--line)}
+.hull{display:flex;align-items:baseline;gap:12px}
+.hull .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;color:var(--flow);
+  border:1px solid var(--flow);padding:2px 7px;letter-spacing:.06em}
+
+/* ── wind bar ───────────────────────────────────────────── */
+.windbar{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(14px,2.4vw,28px);align-items:center;
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:14px clamp(14px,2vw,20px);margin:18px 0;box-shadow:var(--shadow)}
+.windbig{display:flex;align-items:baseline;gap:6px}
+.windbig .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:40px;line-height:.95;letter-spacing:-.02em;
+  min-width:98px;text-align:left}
+.windbig .u{font-size:12px;color:var(--ink-3);font-weight:600}
+.windmeta{display:flex;flex-direction:column;gap:3px;text-align:right;width:176px}
+.windmeta .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:17px;color:var(--load-2)}
+
+/* ── modes ──────────────────────────────────────────────── */
+.modes{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--surface)}
+.modes button{
+  font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:12px;letter-spacing:.11em;text-transform:uppercase;
+  padding:9px 14px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--ink-3);cursor:pointer}
+.modes button:last-child{border-right:0}
+.modes button[aria-pressed="true"]{background:var(--flow);color:var(--on-flow)}
+.modes button:hover:not([aria-pressed="true"]){background:var(--surface-2);color:var(--ink)}
+
+/* ── layout ─────────────────────────────────────────────── */
+.bay{display:grid;grid-template-columns:1.02fr 1.12fr .96fr;gap:14px;align-items:start}
+@media(max-width:1080px){.bay{grid-template-columns:1fr 1fr}.bay .ctrlcard{grid-column:1/-1}}
+@media(max-width:720px){.bay{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:3px;box-shadow:var(--shadow)}
+.card-hd{display:flex;align-items:center;gap:10px;padding:11px 14px 9px;border-bottom:1px solid var(--line-soft)}
+.card-hd .rule{flex:1;height:1px;background:var(--line-soft)}
+.card-bd{padding:12px 14px 14px}
+.card svg{display:block;width:100%;height:auto;overflow:visible}
+
+/* ── controls ───────────────────────────────────────────── */
+.ctrl{padding:9px 0 11px;border-bottom:1px dashed var(--line-soft)}
+.ctrl:last-of-type{border-bottom:0}
+.ctrl-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
+.ctrl-name{font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.ctrl-name:hover{color:var(--flow)}
+.ctrl.sel .ctrl-name{color:var(--flow)}
+.ctrl-val{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;color:var(--ink-3)}
+.ctrl-val .d{margin-left:7px;font-weight:600}
+.ctrl-val .d.hi{color:var(--load-2)} .ctrl-val .d.ok{color:var(--flow)}
+.slot{position:relative;height:22px;display:flex;align-items:center}
+.slot .target{position:absolute;top:1px;bottom:1px;width:2px;background:var(--load-2);opacity:.85;
+  left:calc(9px + var(--t) * (100% - 18px));transform:translateX(-1px);transition:left .5s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:2}
+.slot .target::after{content:"";position:absolute;top:-4px;left:-3px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--load-2)}
+.scale{display:flex;justify-content:space-between;font-family:"Archivo Narrow",sans-serif;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:transparent;margin:0;height:22px;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;
+  background:linear-gradient(90deg,var(--flow) 0 calc(var(--p)*100%),var(--ground-2) calc(var(--p)*100%) 100%);border:1px solid var(--line)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--ground-2);border:1px solid var(--line)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px 0 0 3px;background:var(--flow)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28)}
+input[type=range]:focus-visible{outline:2px solid var(--flow);outline-offset:3px;border-radius:3px}
+.wind-range::-webkit-slider-runnable-track{height:8px;
+  background:linear-gradient(90deg,var(--flow) 0%,var(--load-1) 46%,var(--load-2) 70%,var(--load-3) 100%)}
+.wind-range::-moz-range-track{height:8px;background:linear-gradient(90deg,var(--flow),var(--load-1) 46%,var(--load-2) 70%,var(--load-3))}
+.wind-range::-moz-range-progress{background:transparent}
+
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+button.act{font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:9px 13px;border:1px solid var(--ink);background:var(--ink);color:var(--ground);border-radius:2px;cursor:pointer}
+button.act.ghost{background:transparent;color:var(--ink-2);border-color:var(--line)}
+button.act:hover{background:var(--flow);border-color:var(--flow);color:var(--on-flow)}
+button.act:focus-visible{outline:2px solid var(--flow);outline-offset:2px}
+
+/* ── readout strip ──────────────────────────────────────── */
+.strip{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:3px;margin-top:14px;overflow:hidden}
+@media(min-width:660px){.strip{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1060px){.strip{grid-template-columns:repeat(8,1fr)}}
+.tile{background:var(--surface);padding:11px 13px 12px;display:flex;flex-direction:column;gap:5px}
+.tile .k{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.tile .v{font-family:"IBM Plex Mono",monospace;font-size:21px;font-weight:600;line-height:1;letter-spacing:-.01em}
+.tile .n{font-size:11.5px;color:var(--ink-3);line-height:1.3;min-height:2.6em}
+.bar{height:5px;background:var(--ground-2);border-radius:3px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:var(--flow);border-radius:3px;transition:width .35s ease,background .35s ease}
+.bar .limit{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-2);opacity:.75}
+
+/* ── coach ──────────────────────────────────────────────── */
+.coach{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:860px){.coach{grid-template-columns:1fr}}
+.verdict{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line-soft);background:var(--surface-2)}
+.verdict .dot{width:9px;height:9px;border-radius:50%;background:var(--flow);flex:none}
+.verdict .txt{font-family:"Archivo",sans-serif;font-weight:700;font-size:15px}
+.verdict .sc{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px}
+.diag{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.diag li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 14px;border-bottom:1px dashed var(--line-soft);
+  font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.diag li:last-child{border-bottom:0}
+.diag .sig{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.05em;
+  padding:2px 6px;border-radius:2px;height:fit-content;margin-top:2px;white-space:nowrap}
+.sig.warn{background:rgba(206,114,35,.16);color:var(--load-2)}
+.sig.crit{background:rgba(185,55,38,.15);color:var(--load-3)}
+.sig.good{background:var(--flow-wash);color:var(--flow)}
+.diag b{color:var(--ink);font-weight:600}
+.dossier .card-bd p{margin:0 0 10px}
+.dossier dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 12px;align-items:baseline}
+.dossier dt{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.dossier dd{margin:0;font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.45;color:var(--ink-2)}
+.dossier dd b{color:var(--ink);font-weight:600}
+
+/* ── demo band ──────────────────────────────────────────── */
+.demo{margin-top:14px;border:1px solid var(--line);border-radius:3px;background:var(--surface);
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:16px clamp(14px,2vw,20px)}
+@media(max-width:720px){.demo{grid-template-columns:1fr}}
+.demo .cap{font-family:"Newsreader",Georgia,serif;font-size:16px;color:var(--ink-2);min-height:3em;max-width:62ch}
+.demo .cap b{color:var(--ink);font-weight:600}
+
+/* ── lessons ────────────────────────────────────────────── */
+.lesson{margin-top:56px}
+.lesson-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.lesson-hd .rule{flex:1;height:1px;background:var(--line)}
+.grid3{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+@media(min-width:620px){.grid3{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:980px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.gcell{background:var(--surface);padding:15px 16px 17px;display:flex;flex-direction:column;gap:7px}
+.gcell h3{font-size:15px}
+.gcell p{margin:0;font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.gcell .tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--flow);letter-spacing:.04em}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  background:var(--surface-2);position:sticky;top:0}
+td{font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.45;color:var(--ink-2)}
+td:first-child{font-family:"Archivo",sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.ladder ol{margin:10px 0 0;padding-left:0;list-style:none;counter-reset:s}
+.ladder li{counter-increment:s;position:relative;padding:8px 0 8px 32px;border-bottom:1px dashed var(--line-soft);
+  font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.45;color:var(--ink-2)}
+.ladder li:last-child{border-bottom:0}
+.ladder li::before{content:counter(s);font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:var(--flow);
+  border:1px solid var(--line);width:20px;height:20px;display:grid;place-items:center;border-radius:2px;
+  position:absolute;left:0;top:10px}
+.ladder li b{color:var(--ink);font-weight:600}
+.note{margin-top:22px;border:1px solid var(--line);border-left:3px solid var(--load-2);border-radius:3px;
+  background:var(--surface);padding:14px 16px}
+.note p{margin:6px 0 0;font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:70ch}
+.twocol{display:grid;grid-template-columns:1fr;gap:22px}
+@media(min-width:780px){.twocol{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){
+  .windbar{grid-template-columns:1fr;gap:12px}
+  .windmeta{text-align:left;width:auto}
+  .windbig .v{font-size:34px}
+}
+.foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12.5px;max-width:74ch}
+
+/* ── svg semantics ──────────────────────────────────────── */
+.s-line{stroke:var(--line);fill:none}
+.s-ink{stroke:var(--ink);fill:none}
+.s-dim{stroke:var(--ink-3);fill:none}
+.s-flow{stroke:var(--flow);fill:none}
+.s-lbl{fill:var(--ink-3);font-family:"IBM Plex Mono",monospace;font-size:9px}
+.s-lbl2{fill:var(--ink-2);font-family:"Archivo Narrow",sans-serif;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
+.sailA{fill:var(--sailfill);stroke:var(--ink);stroke-width:1.4}
+.sailB{fill:var(--jibfill);stroke:var(--ink-2);stroke-width:1.2}
+.streak{stroke:var(--flow);stroke-width:1.1;fill:none;stroke-dasharray:5 7;opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+  .streak{animation:drift 1.4s linear infinite}
+  @keyframes drift{to{stroke-dashoffset:-24}}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <div>
+    <div class="hull"><span class="num">I-14</span><span class="eyebrow">Rig &amp; sail trim model</span></div>
+    <h1 style="margin-top:8px">What every string<br>on the boat is&nbsp;doing</h1>
+    <p class="lede">Pull a control and watch the sail change shape. Then move the breeze and watch the <em>right</em> answer move with it — that migration is the whole lesson.</p>
+  </div>
+  <div class="modes" role="group" aria-label="Point of sail">
+    <button type="button" data-mode="upwind" aria-pressed="true">Upwind</button>
+    <button type="button" data-mode="reach" aria-pressed="false">Reaching</button>
+    <button type="button" data-mode="run" aria-pressed="false">Downwind</button>
+  </div>
+</header>
+
+<div class="windbar">
+  <div class="windbig">
+    <span class="v mono" id="w-val">12</span><span class="u">KTS<br>TRUE</span>
+  </div>
+  <div>
+    <label for="wind" class="eyebrow">Breeze — drag me</label>
+    <input type="range" id="wind" class="wind-range" min="3" max="28" step="0.5" value="12" aria-describedby="w-note">
+    <div class="scale"><span>3 · drifting</span><span>10 · both on the wire</span><span>18 · edge</span><span>28 · survival</span></div>
+  </div>
+  <div class="windmeta">
+    <span class="eyebrow">Rig load vs. 10 kts</span>
+    <span class="big mono" id="w-load">1.4×</span>
+    <span class="mono" id="w-note" style="font-size:11px;color:var(--ink-3)">pressure rises with wind²</span>
+  </div>
+</div>
+
+<div class="bay">
+
+  <!-- ── rig elevation ── -->
+  <section class="card">
+    <div class="card-hd"><span class="eyebrow">01 · The rig, from the side</span><span class="rule"></span></div>
+    <div class="card-bd">
+      <svg id="rig" viewBox="0 0 300 430" role="img" aria-labelledby="rig-t">
+        <title id="rig-t">Side elevation of the rig showing mast bend, forestay sag, boom angle and sail depth</title>
+        <g id="rig-static">
+          <line x1="8" y1="392" x2="292" y2="392" class="s-line" stroke-width="1"/>
+          <path id="hull" d="" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
+        </g>
+        <path id="forestay" class="s-ink" stroke-width="1.2"/>
+        <path id="sagref" class="s-dim" stroke-width="1" stroke-dasharray="3 3" opacity=".8"/>
+        <path id="jib" class="sailB"/>
+        <path id="main" class="sailA"/>
+        <path id="stripe1" class="s-dim" stroke-width=".8" stroke-dasharray="2 3"/>
+        <path id="stripe2" class="s-dim" stroke-width=".8" stroke-dasharray="2 3"/>
+        <path id="stripe3" class="s-dim" stroke-width=".8" stroke-dasharray="2 3"/>
+        <circle id="dp1" r="2.6" fill="var(--load-2)"/><circle id="dp2" r="2.6" fill="var(--load-2)"/><circle id="dp3" r="2.6" fill="var(--load-2)"/>
+        <path id="capshroud" fill="none" stroke="var(--ink-2)" stroke-linecap="round"/>
+        <path id="lowershroud" fill="none" stroke="var(--ink-2)" stroke-linecap="round"/>
+        <path id="spreader" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+        <path id="mast" fill="none" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round"/>
+        <path id="mastref" class="s-dim" stroke-width="1" stroke-dasharray="2 4" opacity=".65"/>
+        <path id="boom" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        <path id="vangline" fill="none" stroke="var(--load-2)" stroke-width="1.6"/>
+        <path id="sheetline" fill="none" stroke="var(--load-2)" stroke-width="1.4"/>
+        <path id="cunline" fill="none" stroke="var(--load-2)" stroke-width="1.6"/>
+        <path id="wrinkles" class="s-dim" stroke-width=".8" opacity=".75"/>
+        <g id="rig-labels"></g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── sections ── -->
+  <section class="card">
+    <div class="card-hd"><span class="eyebrow">02 · Slices, seen from above</span><span class="rule"></span></div>
+    <div class="card-bd">
+      <svg id="sec" viewBox="0 0 364 430" role="img" aria-labelledby="sec-t">
+        <title id="sec-t">Three horizontal slices through the sails showing camber, draft position and twist at head, middle and foot</title>
+        <g id="sec-body"></g>
+      </svg>
+      <p class="mono" style="font-size:10.5px;color:var(--ink-3);margin:6px 0 0;line-height:1.5">
+        Bow to the left · leeward is down · teal arrow = apparent wind at that height
+      </p>
+    </div>
+  </section>
+
+  <!-- ── controls ── -->
+  <section class="card ctrlcard">
+    <div class="card-hd"><span class="eyebrow">03 · The strings</span><span class="rule"></span>
+      <span class="mono" style="font-size:10px;color:var(--load-2)">▼ target</span></div>
+    <div class="card-bd" id="ctrls"></div>
+  </section>
+</div>
+
+<div class="strip" id="strip"></div>
+
+<div class="coach">
+  <section class="card">
+    <div class="verdict"><span class="dot" id="v-dot"></span><span class="txt" id="v-txt">Reading the rig…</span>
+      <span class="sc mono" id="v-score">—</span></div>
+    <ul class="diag" id="diag"></ul>
+  </section>
+  <section class="card dossier">
+    <div class="card-hd"><span class="eyebrow" id="dos-eyebrow">04 · Control notes</span><span class="rule"></span></div>
+    <div class="card-bd" id="dossier"></div>
+  </section>
+</div>
+
+<div class="demo">
+  <div>
+    <span class="eyebrow">The demonstration</span>
+    <p class="cap" id="demo-cap">Set your trim for a nice 10-knot beat, then press <b>Let the breeze build</b> and touch nothing. The wind goes to 22 while every string stays exactly where you left it. Watch the draft slide aft and the boat fall over — that is what you are fighting when you pull tension on.</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="act" id="btn-build" type="button">Let the breeze build</button>
+    <button class="act ghost" id="btn-fix" type="button">Now re-tune it</button>
+  </div>
+</div>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>Five things a sail can be</h2><span class="rule"></span>
+    <span class="eyebrow">everything below moves one of these</span></div>
+  <p class="prose" style="margin:0 0 16px">Every string on the boat is a way of changing one of five numbers. Learn the five and the controls stop being a list to memorise — they become the tools you reach for once you have decided what the sail should look like.</p>
+  <div class="grid3">
+    <div class="gcell"><span class="tag">DEPTH</span><h3>How fat it is</h3>
+      <p>Camber, as a percentage of the chord. Deep sail = big lift coefficient = power, and a lot of side force with it. Flat sail = less drive, but less heel and a wider steering groove. In the model this is the number that decides whether you are powered or pinned.</p></div>
+    <div class="gcell"><span class="tag">DRAFT POSITION</span><h3>Where the fat bit is</h3>
+      <p>How far aft of the luff the deepest point sits, around 45–50% for a mainsail. Forward of that the entry is fine and the exit flat — fast and forgiving. Aft of it the leech hooks: the back of the sail is now a brake pointed sideways, and the helm loads up.</p></div>
+    <div class="gcell"><span class="tag">TWIST</span><h3>How much the top gives away</h3>
+      <p>The angle between the top of the sail and the bottom. Some is required — the wind up there genuinely comes from a different angle. The rest is a choice about how much load you want up high, where it hurts most.</p></div>
+    <div class="gcell"><span class="tag">ANGLE OF ATTACK</span><h3>How hard it faces the wind</h3>
+      <p>Sheet the sail in and you increase it: more lift until the flow separates, then all drag. Ease it and the luff starts to lift. This is the fast-twitch control — it changes gust to gust, not day to day.</p></div>
+    <div class="gcell"><span class="tag">ENTRY</span><h3>How blunt the front is</h3>
+      <p>A round entry is tolerant — it takes a wide range of angles without complaining, which is what you want in waves. A fine entry points higher but demands accurate steering. On the jib, forestay sag is what sets it.</p></div>
+    <div class="gcell" style="background:var(--surface-2)"><span class="tag">THE RELATIONSHIP</span><h3>Nothing moves alone</h3>
+      <p>Pull the vang and you change twist <em>and</em> depth <em>and</em> draft position, because bending the mast takes luff round out of the front of the sail. That coupling is why trim feels hard, and why the model above shows you all five at once.</p></div>
+  </div>
+</section>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>What each string actually pulls</h2><span class="rule"></span></div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Control</th><th>What it physically pulls</th><th>First thing that changes</th><th>Second thing that changes</th><th>Where people get it wrong</th></tr></thead>
+    <tbody>
+      <tr><td>Mainsheet</td><td>The boom down and in — upwind, with the boom near the centreline, mostly <em>down</em>.</td><td>Leech tension, so twist. Then angle of attack.</td><td>Mast bend, via compression down the boom into the gooseneck.</td><td>Cleating it. Upwind in a skiff the sheet is a live control — it should be moving constantly.</td></tr>
+      <tr><td>Boom vang</td><td>The boom down against the mast, whatever angle the boom is at.</td><td>Leech tension independent of sheet angle.</td><td>Bends the mast, flattening the lower main and opening the head.</td><td>Leaving it soft downwind. Off the wind the sheet cannot pull down at all — the vang is the <em>only</em> leech control you have.</td></tr>
+      <tr><td>Cunningham</td><td>The luff of the main down, tensioning the cloth along the front edge.</td><td>Drags the draft forward, back toward 45%.</td><td>Opens the upper leech slightly and flattens the head.</td><td>Using it in light air. It flattens the entry you need for power, and luff wrinkles at the bottom of the range are fine — some are even fast.</td></tr>
+      <tr><td>Outhaul</td><td>The clew aft along the boom.</td><td>Depth in the bottom third of the main.</td><td>Foot shelf, and how much the boom-end area works.</td><td>Forgetting it exists at the windward mark. Bottom-third depth is free downwind drive.</td></tr>
+      <tr><td>Jib sheet</td><td>The clew down and in, along the line from clew to lead.</td><td>Angle of attack and jib leech tension together.</td><td>Slot width — and therefore whether the main backwinds.</td><td>Over-sheeting to "point higher". A choked slot stalls the main and the boat just goes sideways more slowly.</td></tr>
+      <tr><td>Jib lead</td><td>Changes the <em>direction</em> the sheet pulls: forward = down, aft = back.</td><td>How load splits between leech and foot, so jib twist.</td><td>Foot depth, and with an inhaul or barber, the sheeting angle.</td><td>Treating it as a set-and-forget. It is the jib's vang, cunningham and outhaul in one slider.</td></tr>
+      <tr><td>Cap shrouds</td><td>Hounds to chainplate. Through the mast, they pull the forestay straight.</td><td>Overall rig tension, so forestay sag — jib entry and draft position.</td><td>Compression down the mast, which adds bend on a swept-spreader rig.</td><td>Not adding any as the breeze builds. Sag grows on its own with load; standing still means going backwards.</td></tr>
+      <tr><td>Lowers</td><td>The middle of the mast, at the spreaders — aft and down against the bend.</td><td>How much the middle of the mast can bow forward.</td><td>Lower mainsail depth, and how much luff round stays in the sail.</td><td>Two ways. Leaving them on in a blow so the bottom stays fat — and running them so slack the mast can over-bend or invert.</td></tr>
+      <tr><td>Forestay</td><td>Its own length, mostly. Longer, and the whole rig leans aft.</td><td>Rake — centre of effort down and aft, shorter heeling lever.</td><td>Bleeds tension out of the caps, so sag creeps back in.</td><td>Raking without touching the board, and forgetting you now need more cap tension to hold the same forestay.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>Why more breeze means more tension</h2><span class="rule"></span>
+    <span class="eyebrow">three separate reasons, often confused</span></div>
+  <div class="ladder" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--flow);font-size:10.5px">REASON ONE</span>
+      <h3 style="margin:6px 0 8px">You are only holding the shape you already had</h3>
+      <p class="prose" style="font-size:15.5px">Aerodynamic pressure goes with the <b>square</b> of wind speed. Going from 10 to 20 knots is not twice the load on your rig — it is four times. Cloth stretches, the leech stretches, the forestay sags, the mast bends further. Leave every string exactly where it was and the sail becomes deeper, with the draft further aft and a leech that has bladed off at the top. So the first tranche of tension is not depowering at all. It is standing still.</p>
+    </div></div>
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--load-2);font-size:10.5px">REASON TWO</span>
+      <h3 style="margin:6px 0 8px">Past a point, power stops being speed</h3>
+      <p class="prose" style="font-size:15.5px">Two people on the wire can hold a fixed amount of heeling moment. Below that number, more power is more speed. Above it, extra power just heels the boat, which spills it anyway — but now with the foils at a bad angle, the rudder dragging and the bow tripping. <b>Once you are at the limit, the fast setting and the survivable setting are the same setting</b>: flat, twisted, draft forward. Flattening is not slowing down. It is converting side force you cannot use into a boat you can steer.</p>
+    </div></div>
+    <div class="card"><div class="card-bd">
+      <span class="tag mono" style="color:var(--load-3);font-size:10.5px">REASON THREE</span>
+      <h3 style="margin:6px 0 8px">Draft aft is a handling problem, not just a slow one</h3>
+      <p class="prose" style="font-size:15.5px">A hooked leech pushes the centre of effort aft and up. The boat develops weather helm, wants to round up, and every gust becomes a fight rather than an acceleration. Cunningham on, outhaul on, vang on: the draft comes forward, the exit opens, the effort moves down and forward, and the helm goes light. In a fully powered breeze the boat that is easiest to sail is the one that is set up flat — and the one that is easy to sail is the one that goes fast for the whole beat, not for ten seconds.</p>
+    </div></div>
+  </div>
+  <div class="note">
+    <span class="eyebrow" style="color:var(--load-2)">The other direction is just as real</span>
+    <p>Everything above runs backwards in light air, and this is where the tension habit costs people races. In 5 knots the cloth is not loaded, the forestay is not sagging and nothing needs holding in place. Cunningham on pulls the draft too far forward and kills the entry; outhaul on takes away the only depth you have; vang on closes a leech that has almost no flow energy to spare and the sail stalls. <b>Light air wants everything soft and a little more twist than feels right.</b> The controls are not a ratchet that only goes one way.</p>
+  </div>
+</section>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>Why the top of the sail is not the bottom</h2><span class="rule"></span></div>
+  <div class="twocol">
+    <p class="prose">Wind is slowed by friction against the water, so the true wind at the head of your rig is stronger than the true wind at the boom. Your boat speed, though, is the same at every height. Apparent wind is true wind minus boat velocity — so where the true wind is weak, down low, the apparent wind gets dragged further <em>forward</em>; where it is strong, up high, it stays further <em>aft</em>. The top of the sail is being hit from a different angle than the bottom, and twist is how the sail matches it.</p>
+    <p class="prose">That shear is worth a few degrees — the model above shows you the live number. Real twist is bigger than that, because the second job of twist is deciding <b>where to put the load</b>. Load high on the rig has the longest lever on heeling moment, so twisting the head open is the cheapest power you can throw away. And here is the skiff twist: a 14 going quickly makes so much of its own apparent wind that the shear angle collapses. Once you are up and firing, twist stops being about matching the wind and becomes purely a depowering choice — which is why powered-up, in control, a fast 14 upwind carries a surprisingly tight leech.</p>
+  </div>
+</section>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>The two ladders</h2><span class="rule"></span><span class="eyebrow">in order, top first</span></div>
+  <div class="ladder">
+    <div class="card"><div class="card-bd">
+      <span class="eyebrow" style="color:var(--load-2)">Overpowered — climb down</span>
+      <ol>
+        <li><b>Crew weight out and back.</b> Free, instant, and it costs nothing in sail shape. Always first.</li>
+        <li><b>Ease the sheet, play it.</b> Angle of attack is the fastest lever you own. In a puff, dump and bear away a touch.</li>
+        <li><b>Vang on.</b> Bends the mast, flattens the bottom, opens the head — and now the sheet can be eased without the leech closing up. This is vang sheeting, and it is the technique that makes a traveller-less skiff work.</li>
+        <li><b>Cunningham on.</b> Drags the draft back forward from where the load pushed it. Cheap, big, reversible.</li>
+        <li><b>Outhaul on.</b> Bottom third goes flat.</li>
+        <li><b>Ease the lowers.</b> Let the middle of the mast bow forward; it pulls luff round out of the sail and the bottom half goes flat. Not so far that it can invert.</li>
+        <li><b>Caps on.</b> Takes the sag out of the forestay so the jib stops being a power sail — and adds bend while it is at it.</li>
+        <li><b>Forestay out, rake aft.</b> The whole-rig answer when the above has run out. Take some board with it or you will fight the helm, and expect to want more cap tension afterwards.</li>
+      </ol>
+    </div></div>
+    <div class="card"><div class="card-bd">
+      <span class="eyebrow" style="color:var(--flow)">Underpowered — climb up</span>
+      <ol>
+        <li><b>Everything soft.</b> Cunningham fully off, outhaul off, vang just snug enough to stop the boom skying.</li>
+        <li><b>Caps off, forestay short, lowers on.</b> The rig stands up, the mast stays straight, the bottom half of the main gets deep, and the centre of effort sits high where the wind actually is.</li>
+        <li><b>Sheet with twist.</b> Do not haul the leech shut chasing height — low-energy flow separates easily and a stalled sail makes no lift at all.</li>
+        <li><b>Jib lead forward and in</b> to keep a closed but not choked leech, and let a little forestay sag give the jib a round, forgiving entry.</li>
+        <li><b>Heel to leeward a few degrees.</b> Gravity sets the sail, reduces wetted surface, gives the foils some angle. It is a trim control in drifting conditions.</li>
+        <li><b>Move as little as possible.</b> Every lurch dumps the flow off both sails.</li>
+      </ol>
+    </div></div>
+  </div>
+</section>
+
+<section class="lesson">
+  <div class="lesson-hd"><h2>What is particular about a Fourteen</h2><span class="rule"></span></div>
+  <div class="grid3">
+    <div class="gcell"><span class="tag">NO TRAVELLER</span><h3>The sheet does two jobs</h3>
+      <p>With the mainsheet coming to a bridle or a centre point rather than a car, you cannot change boom angle and leech tension separately. So you set the leech with the vang and then use the sheet purely for angle. Get the vang right and the boat becomes enormously easier to sail in a breeze.</p></div>
+    <div class="gcell"><span class="tag">SQUARE TOP</span><h3>The head depowers itself</h3>
+      <p>A big roached head on a bendy tip is a gust valve: pressure loads the head, the tip twists off, the sail sheds it, the tip springs back. It buys you a lot of automatic gust response — and it means the vang has real authority over how much of that valve is available.</p></div>
+    <div class="gcell"><span class="tag">APPARENT WIND</span><h3>You make your own weather</h3>
+      <p>A 14 reaching can put the apparent wind well forward of the beam in a true wind that is nearly behind. That is why the kite sheet and the main are trimmed almost like upwind sails at speed, and why the boat accelerates into its own wind rather than being pushed along by the true one.</p></div>
+    <div class="gcell"><span class="tag">FOILS</span><h3>Rake changes the balance too</h3>
+      <p>Rig rake, board rake and rudder foil all pull on the same balance. Raking the rig aft to depower moves the centre of effort aft; if the underwater centre does not move with it, the beat is sailed with the rudder cocked and you have added drag exactly when you can least afford it.</p></div>
+    <div class="gcell"><span class="tag">TWO ON THE WIRE</span><h3>The limit is a fixed number</h3>
+      <p>The righting moment available is roughly constant once both of you are out. That makes the overpowered/underpowered threshold sharp and predictable — and it is why the transition from "sheet it on" to "flatten everything" happens over a surprisingly narrow band of wind.</p></div>
+    <div class="gcell" style="background:var(--surface-2)"><span class="tag">DEVELOPMENT CLASS</span><h3>Your boat is not this boat</h3>
+      <p>Fourteens differ enormously — rig, spreaders, mast section, sail cut, control systems. Take the <em>directions</em> from this model and the numbers from your own tuning chart and your own boat, in your own conditions, with a stopwatch and someone to line up against.</p></div>
+  </div>
+</section>
+
+<p class="foot">A teaching model, not a velocity prediction program. The aerodynamics here are simplified relationships chosen to make the couplings between controls visible and correct in direction — deeper sails make more power and more heel, load moves draft aft, sag rounds the jib entry, tension holds shape. Absolute numbers are illustrative. Anything you are about to bolt to a boat should be checked against your class tuning guide and your sailmaker.</p>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var SVGNS="http://www.w3.org/2000/svg";
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+function mk(t,a){var e=document.createElementNS(SVGNS,t);for(var k in a){if(a[k]!==null&&a[k]!==undefined)e.setAttribute(k,a[k])}return e}
+function el(id){return document.getElementById(id)}
+function fmt(v,d){return v.toFixed(d===undefined?0:d)}
+
+/* ════════ control definitions ════════ */
+var CONTROLS=[
+ {k:"main",name:"Mainsheet",lo:"eased",hi:"block to block",
+  blurb:"Upwind, with the boom near the centreline, the sheet pulls the boom <b>down</b> more than in — so it is your main leech-tension control and your angle control at the same time. That double duty is why it can never be cleated.",
+  light:"Sheet to a soft leech. Chasing height by hauling the leech shut in 5 knots stalls the sail and the boat stops.",
+  heavy:"Set the leech with the vang first, then play the sheet freely for angle. Dump it in the puffs — that is the depower valve you use every ten seconds."},
+ {k:"vang",name:"Boom vang",lo:"soft",hi:"cranked",
+  blurb:"Pulls the boom down against the mast regardless of where the boom is pointing. It is the only leech control that still works with the boom eased, and it bends the mast, which flattens the lower main and opens the head.",
+  light:"Just snug — enough to stop the boom skying, no more. A hard vang in light air closes a leech that has no flow energy to spare.",
+  heavy:"On hard. It bends the mast, flattens the bottom, opens the top and lets you dump the sheet without the leech slamming shut. This is vang sheeting."},
+ {k:"cun",name:"Cunningham",lo:"off",hi:"maxed",
+  blurb:"Tensions the luff cloth and drags the deepest part of the sail back forward. It is the direct antidote to what wind pressure does to a sail: load pulls draft aft, cunningham pulls it forward.",
+  light:"Completely off. Luff wrinkles are not a fault in light air — pulling them out flattens the entry you need for power.",
+  heavy:"On, and keep adding it as the breeze builds. It is the cheapest, most reversible depower on the boat and it takes the weather helm out with it."},
+ {k:"out",name:"Outhaul",lo:"deep foot",hi:"bar tight",
+  blurb:"Foot tension. Owns the depth of the bottom third of the mainsail and almost nothing else — which makes it the one control with a clean, single job.",
+  light:"Off for depth. The bottom of the sail is in the least wind, so it needs the most shape.",
+  heavy:"On hard. Flat bottom third means less side force from the part of the sail with the best lever on the hull."},
+ {k:"jib",name:"Jib sheet",lo:"eased",hi:"hard in",
+  blurb:"Sets angle of attack and leech tension in one pull, and with them the width of the slot between the jib leech and the back of the mainsail.",
+  light:"Eased, with the lead forward. A little sag in the forestay gives a round, forgiving entry that tolerates bad steering.",
+  heavy:"Do not over-sheet trying to point. A choked slot backwinds the main, and a backwinded main is just a very expensive drag device."},
+ {k:"lead",name:"Jib lead",lo:"forward + in",hi:"aft + out",
+  blurb:"Changes the direction the sheet pulls. Forward, the load goes into the leech: less twist, deeper, more pointing. Aft, the load goes into the foot: flat foot, twisted-open leech, depowered.",
+  light:"Forward and inboard for a closed but not choked leech and a narrow sheeting angle.",
+  heavy:"Aft and outboard. It twists the head of the jib open and widens the slot exactly when the main most needs clean air."},
+ {k:"caps",name:"Cap shrouds",lo:"slack",hi:"wound on",
+  blurb:"The long ones, hounds to chainplate. They set the overall tension in the rig — and because the mast stands between them and the forestay, <b>winding the caps on is what actually pulls the forestay straight</b>. On a swept-spreader rig they also load the mast in compression, so they add bend as well as tension.",
+  light:"Softer. A little forestay sag rounds the jib entry and gives you a forgiving, powerful shape when there is nothing to depower anyway.",
+  heavy:"On. Sag grows on its own as the load comes up, so every turn you put in is really just holding the jib to the shape it already had in ten knots."},
+ {k:"lowers",name:"Lowers · mid-mast",lo:"slack · free to bend",hi:"hard · mast straight",
+  blurb:"The shrouds that land at the spreaders — lowers, intermediates or diamonds depending on how your rig is built. They own the middle of the mast: on hard, the middle is held straight; off, it is free to bow forward. This is your most direct handle on mast bend, and so on how full the bottom half of the main is.",
+  light:"On. A straight mast leaves the luff round in the sail and the bottom half stays deep and powerful.",
+  heavy:"Ease them and let the middle bow forward — the mast pulls luff round out of the sail and the lower main goes flat. Not so slack that it can over-bend or invert in a gust, though; that is how masts break."},
+ {k:"forestay",name:"Forestay",lo:"short · rig upright",hi:"long · raked aft",
+  blurb:"Mostly a <em>length</em> control rather than a tension one. Let it out and the whole rig leans aft — that is rake. Its tension is not really yours to set directly: it is whatever the caps leave it. That is why these two never feel independent.",
+  light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
+  heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."}
+];
+var CK=CONTROLS.map(function(c){return c.k});
+
+/* ════════ tuning targets (wind kts -> setting) ════════ */
+var TARGETS={
+ upwind:{main:[[3,.58],[6,.68],[9,.80],[12,.88],[15,.88],[18,.80],[22,.70],[28,.60]],
+   vang:[[3,.10],[6,.18],[9,.32],[12,.46],[15,.60],[18,.74],[22,.88],[28,.98]],
+   cun:[[3,0],[6,.02],[9,.10],[12,.24],[15,.42],[18,.62],[22,.82],[28,1]],
+   out:[[3,.20],[6,.30],[9,.45],[12,.58],[15,.70],[18,.82],[22,.92],[28,1]],
+   jib:[[3,.40],[6,.58],[9,.74],[12,.82],[15,.82],[18,.76],[22,.68],[28,.60]],
+   lead:[[3,.24],[6,.30],[9,.38],[12,.46],[15,.56],[18,.68],[22,.80],[28,.92]],
+   caps:[[3,.15],[6,.24],[9,.40],[12,.54],[15,.66],[18,.78],[22,.90],[28,1]],
+   lowers:[[3,.70],[6,.68],[9,.62],[12,.55],[15,.46],[18,.36],[22,.28],[28,.22]],
+   forestay:[[3,.09],[6,.14],[9,.24],[12,.35],[15,.48],[18,.62],[22,.80],[28,.96]]},
+ reach:{main:[[3,.62],[8,.66],[12,.62],[18,.54],[28,.44]],
+   vang:[[3,.48],[8,.56],[12,.66],[18,.80],[28,.92]],
+   cun:[[3,0],[8,.10],[12,.26],[18,.56],[28,.86]],
+   out:[[3,.18],[8,.30],[12,.44],[18,.64],[28,.84]],
+   jib:[[3,.30],[8,.42],[12,.48],[18,.44],[28,.36]],
+   lead:[[3,.44],[8,.54],[12,.64],[18,.78],[28,.90]],
+   caps:[[3,.18],[8,.32],[12,.50],[18,.72],[28,.92]],
+   lowers:[[3,.72],[8,.66],[12,.58],[18,.44],[28,.30]],
+   forestay:[[3,.08],[8,.14],[12,.24],[18,.44],[28,.74]]},
+ run:{main:[[3,.52],[6,.50],[12,.45],[18,.42],[28,.36]],
+   vang:[[3,.34],[8,.52],[12,.64],[18,.78],[28,.88]],
+   cun:[[3,0],[8,.06],[12,.20],[18,.48],[28,.80]],
+   out:[[3,.10],[8,.20],[12,.30],[18,.50],[28,.74]],
+   jib:[[3,.22],[8,.28],[12,.32],[18,.30],[28,.24]],
+   lead:[[3,.70],[8,.80],[12,.86],[18,.92],[28,.96]],
+   caps:[[3,.18],[8,.30],[12,.46],[18,.68],[28,.88]],
+   lowers:[[3,.74],[8,.70],[12,.64],[18,.52],[28,.38]],
+   forestay:[[3,.06],[8,.11],[12,.18],[18,.32],[28,.56]]}};
+function curve(pts,x){
+  if(x<=pts[0][0])return pts[0][1];
+  for(var i=1;i<pts.length;i++){if(x<=pts[i][0]){var a=pts[i-1],b=pts[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}}
+  return pts[pts.length-1][1];
+}
+function targetState(s){
+  var t={wind:s.wind,mode:s.mode},tab=TARGETS[s.mode];
+  for(var i=0;i<CK.length;i++)t[CK[i]]=curve(tab[CK[i]],s.wind);
+  return t;
+}
+
+/* ════════ the model ════════ */
+var REF=10, RIGHT=1.15;
+function model(s){
+  var W=s.wind, up=s.mode==="upwind", reach=s.mode==="reach";
+  var q=Math.pow(W/REF,2);
+  var st=(q>=1?1:-1)*Math.pow(Math.abs(q-1),.75)*.55;      // cloth / rig stretch index
+  var vb=up?Math.min(1.02*W,1.6+.50*W):reach?Math.min(1.85*W,3.4+.78*W):Math.min(1.45*W,2.8+.66*W);
+  /* you cannot point in a drifter — the boat foots off to build its own wind, and
+     bears away again at the top of the range */
+  var twa=up?clamp(52-.85*W,40,54)+clamp((W-18)*.35,0,3):reach?105:148;
+  var alpha=Math.max(.16,.44-.012*W);
+  function aw(h){
+    var g=Math.pow(.22+.78*h,alpha), vt=W*g, r=twa*Math.PI/180;
+    var ax=vt*Math.cos(r)+vb, ay=vt*Math.sin(r);
+    return {ang:Math.atan2(ay,ax)*180/Math.PI, spd:Math.sqrt(ax*ax+ay*ay)};
+  }
+  var awFoot=aw(.14), awMid=aw(.55), awHead=aw(.95);
+  var shear=awHead.ang-awFoot.ang;
+
+  /* Rig tension and rake are not controls — they are what the three wires leave you
+     with. The caps tension the forestay through the mast; letting the forestay out
+     rakes the rig aft and bleeds tension out of everything. */
+  var rigEq=clamp(.08+1.05*s.caps-.20*s.forestay,0,1);
+  var rakeEq=clamp(.04+1.02*s.forestay-.10*s.caps,0,1);
+
+  var sheetLeech=up?s.main:reach?s.main*.50:s.main*.18;
+  var leechCmd=Math.max(sheetLeech,s.vang*.96);
+  var leechEff=clamp(leechCmd-.16*st*(1.05-.45*leechCmd),0,1);
+  /* caps compress the mast and add bend; the lowers hold the middle straight against it */
+  var bend=clamp(.52*leechCmd+.18+.46*s.caps-.42*s.lowers+.14*st+.08*s.cun,0,1.45);
+  var twist=clamp(3.5+33*Math.pow(1-leechEff,1.12)+5.5*st*(1-.55*leechEff)+3.2*(bend-.55),1.5,46);
+
+  var dLow=clamp(15.8-6.2*s.out-4.6*bend+1.7*st,4.5,19);
+  var dMid=clamp(14.2-2.6*s.out-4.6*bend+1.4*st-.8*s.cun,4,17.5);
+  var dTop=clamp(11.8-.5*s.out-1.8*bend+1.0*st-.055*twist,3.2,14.5);
+  var draft=clamp(47+7*st-15.5*s.cun+4.2*bend-2.2*s.out,27,66);
+
+  /* Boom angle is not a fixed number. Eased right out the sail sits at the apparent
+     wind and flogs; the sheet hauls it in from there. On a boat with no traveller
+     that is one control doing two jobs, which is the whole problem. */
+  var boomMax=clamp(awMid.ang-5,6,82);
+  var boomAng=boomMax*(1-.80*s.main);
+  /* a cambered sail carries lift at a lower chord angle than a flat plate, so the
+     angle it wants scales with how deep it is */
+  var draftIdeal=up?46.5:reach?48.5:50;
+  var aoaBonus=up?0:clamp((boomAng-15)/6,0,8);
+  var idealAoA=4+.55*dMid+aoaBonus;
+  var aoaMid=awMid.ang-(boomAng+twist*.48)-(up?2.5:2.0);
+
+  var camber=(dLow*1.15+dMid+dTop*.75)/2.9;
+  var sag=clamp((.45+.55*st)*(1-.78*rigEq),.02,1.3);
+  var sagCm=3+sag*20;
+  var jibDepth=clamp(9.2+4.6*sag-1.8*s.jib-1.6*s.lead+.7*st,4,16);
+  var jibDraft=clamp(36+16*sag+4*st-3*s.jib,28,56);
+  var jibLeechCmd=clamp(s.jib*(1-.52*s.lead)+.12*(1-s.lead),0,1);
+  var jibLeechEff=clamp(jibLeechCmd-.14*st,0,1);
+  var jibTwist=clamp(3+32*Math.pow(1-jibLeechEff,1.1)+4*Math.max(0,st),2,45);
+  var jibAng=boomAng+3.5+s.lead*9;
+
+  var slotOpen=clamp(.10+.030*jibTwist+.42*(1-s.jib)-.020*dMid+.18*s.lead,.02,1.2);
+  var backwind=clamp((.42-slotOpen)*2.6,0,1);
+
+  /* off the wind it is the top of the sail projecting forward that drives you, so
+     twisting the head away costs more than it does upwind */
+  var twistSpill=1-(up?.0135:.024)*Math.max(0,twist-6);
+  var cMain=(camber/11)*twistSpill;
+  var cJib=(jibDepth/10)*(1-.010*Math.max(0,jibTwist-8));
+  var cTot=clamp(.66*cMain+.34*cJib,.15,1.9)*(1-.30*backwind);
+  var aero=cTot*q*(up?1:reach?1.30:1.10)*(1-.16*rakeEq);
+
+  /* the share of the aero force that acts sideways rather than forwards */
+  var sideFrac=up?1:reach?.80:.50;
+  var arm=(1-.006*Math.max(0,twist-6))*(1-.22*rakeEq);
+  var heelM=aero*arm*sideFrac, heelRatio=heelM/RIGHT;
+
+  var trimPen=.020*Math.max(0,idealAoA-aoaMid)+.014*Math.max(0,aoaMid-idealAoA);
+  var dragPen=.016*Math.max(0,camber-10.5);
+  var flowE=clamp(awMid.spd/9,.2,1.7);
+  var stallPen=.5*clamp((1.25-flowE)*(1-twist/20),0,1);
+  var draftErr=Math.max(0,draft-draftIdeal)+.45*Math.max(0,draftIdeal-draft);
+  /* no saturation point: past the limit, every extra scrap of power keeps costing */
+  var eff=clamp(1-.30*backwind-.016*draftErr-.26*clamp(heelRatio-1,0,3.2)
+        -(up?.14:.05)*clamp(sag/.9,0,1)-stallPen-trimPen-dragPen,.12,1);
+  var usable=Math.min(aero,RIGHT+.2*Math.max(0,aero-RIGHT));
+  var speedIdx=usable*eff;
+
+  var pointing=clamp(100*(.42+.30*(1-clamp(sag/.85,0,1))+.22*(1-clamp(draftErr/16,0,1))
+        +.18*(1-clamp(twist/30,0,1))-.30*clamp(heelRatio-1,0,1)-.2*backwind),0,100);
+  var helm=clamp(1.4+.12*(draft-46.5)+2.6*clamp(heelRatio-.9,0,1.2)+2.2*(rakeEq-.3)-.5*(1-s.jib),-1.5,9);
+  var boatSpeed=vb*clamp(.55+.45*(speedIdx/Math.max(.35,usable||.35)),.5,1.05);
+
+  return {q:q,st:st,boomAng:boomAng,boomMax:boomMax,aoaMid:aoaMid,idealAoA:idealAoA,vb:vb,aw:aw,awFoot:awFoot,awMid:awMid,awHead:awHead,shear:shear,
+    leechCmd:leechCmd,leechEff:leechEff,bend:bend,twist:twist,dLow:dLow,dMid:dMid,dTop:dTop,draft:draft,
+    sag:sag,sagCm:sagCm,jibDepth:jibDepth,jibDraft:jibDraft,jibTwist:jibTwist,jibAng:jibAng,
+    slotOpen:slotOpen,backwind:backwind,aero:aero,heelRatio:heelRatio,eff:eff,speedIdx:speedIdx,
+    pointing:pointing,helm:helm,draftIdeal:draftIdeal,aoaBonus:aoaBonus,rigEq:rigEq,rakeEq:rakeEq,boatSpeed:boatSpeed,camber:camber,up:up};
+}
+
+/* ════════ state ════════ */
+var S={wind:12,mode:"upwind",main:.62,vang:.24,cun:.05,out:.38,jib:.66,lead:.34,caps:.40,lowers:.62,forestay:.20};
+var selected="main", demo=null;
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ════════ build the control bank ════════ */
+var rangeEls={},deltaEls={},targetEls={},valEls={},rowEls={};
+(function(){
+  var host=el("ctrls");
+  CONTROLS.forEach(function(c){
+    var row=document.createElement("div"); row.className="ctrl"; row.dataset.k=c.k;
+    row.innerHTML='<div class="ctrl-hd"><button type="button" class="ctrl-name">'+c.name+'</button>'+
+      '<span class="ctrl-val"><span class="n mono">0</span><span class="d mono"></span></span></div>'+
+      '<div class="slot"><span class="target"></span></div>'+
+      '<div class="scale"><span>'+c.lo+'</span><span>'+c.hi+'</span></div>';
+    var slot=row.querySelector(".slot");
+    var r=document.createElement("input");
+    r.type="range"; r.min=0; r.max=1; r.step=.01; r.value=S[c.k]; r.id="c-"+c.k;
+    r.setAttribute("aria-label",c.name);
+    slot.appendChild(r);
+    host.appendChild(row);
+    rangeEls[c.k]=r; deltaEls[c.k]=row.querySelector(".d"); valEls[c.k]=row.querySelector(".n");
+    targetEls[c.k]=row.querySelector(".target"); rowEls[c.k]=row;
+    r.addEventListener("input",function(){S[c.k]=parseFloat(r.value); selected=c.k; stopDemo(); render()});
+    r.addEventListener("focus",function(){selected=c.k; render()});
+    row.querySelector(".ctrl-name").addEventListener("click",function(){selected=c.k; render()});
+  });
+  var br=document.createElement("div"); br.className="btnrow";
+  br.innerHTML='<button class="act" type="button" id="btn-auto">Trim it for me</button>'+
+    '<button class="act ghost" type="button" id="btn-soft">Everything off</button>';
+  host.appendChild(br);
+})();
+
+/* ════════ readout strip ════════ */
+var TILES=[
+ {k:"depth",label:"Camber, mid"},{k:"draft",label:"Draft position"},{k:"twist",label:"Twist at head"},
+ {k:"shear",label:"AW shear"},{k:"sag",label:"Forestay sag"},{k:"power",label:"Power vs limit",bar:1},
+ {k:"helm",label:"Weather helm"},{k:"speed",label:"Boat speed"}];
+var tileEls={};
+(function(){
+  var host=el("strip");
+  TILES.forEach(function(t){
+    var d=document.createElement("div"); d.className="tile";
+    d.innerHTML='<span class="k">'+t.label+'</span><span class="v mono">–</span>'+
+      (t.bar?'<span class="bar"><i style="width:0%"></i><span class="limit" style="left:64%"></span></span>':'')+
+      '<span class="n">…</span>';
+    host.appendChild(d);
+    tileEls[t.k]={v:d.querySelector(".v"),n:d.querySelector(".n"),bar:t.bar?d.querySelector(".bar i"):null};
+  });
+})();
+
+/* ════════ rig elevation geometry ════════ */
+var BASE={x:140,y:388}, BOW={x:22,y:376}, DECKY=388;
+function qpt(p0,p1,p2,t){var u=1-t;return{x:u*u*p0.x+2*u*t*p1.x+t*t*p2.x, y:u*u*p0.y+2*u*t*p1.y+t*t*p2.y}}
+function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)}).join(" ")}
+(function(){
+  el("hull").setAttribute("d","M14 388 L282 388 L268 400 L34 402 Z");
+  var L=el("rig-labels");
+  ["bendlbl","saglbl","riglbl"].forEach(function(id,i){
+    var t=mk("text",{id:id,class:"s-lbl",x:0,y:0}); L.appendChild(t);
+  });
+})();
+
+function renderRig(m){
+  var tip={x:BASE.x+m.rakeEq*30, y:30+m.rakeEq*13};
+  var mid={x:(BASE.x+tip.x)/2 - m.bend*26, y:(BASE.y+tip.y)/2};
+  var mastPt=function(t){return qpt(BASE,mid,tip,t)};
+  var pts=[],i;
+  for(i=0;i<=24;i++)pts.push(mastPt(i/24));
+  el("mast").setAttribute("d",pline(pts));
+  el("mastref").setAttribute("d","M"+BASE.x+" "+BASE.y+"L"+tip.x.toFixed(1)+" "+tip.y.toFixed(1));
+
+  var goose=mastPt(.105), hounds=mastPt(.895);
+  var boomDy=-10+14*m.leechCmd;
+  var clew={x:goose.x+118, y:goose.y+boomDy};
+  el("boom").setAttribute("d","M"+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"L"+clew.x.toFixed(1)+" "+clew.y.toFixed(1));
+
+  var headW=12+26*Math.cos(clamp(m.twist*1.6,0,80)*Math.PI/180);
+  var headAft={x:tip.x+headW, y:tip.y+7};
+  var roach=8+14*(1-m.twist/46);
+  var lctl={x:(headAft.x+clew.x)/2+roach, y:(headAft.y+clew.y)/2};
+  var fctl={x:(goose.x+clew.x)/2, y:(goose.y+clew.y)/2+(1-m_out())*9};
+
+  var luff=[]; for(i=0;i<=18;i++)luff.push(mastPt(.105+.79*(i/18)));
+  var mainD=pline(luff)+"L"+headAft.x.toFixed(1)+" "+headAft.y.toFixed(1)+
+    "Q"+lctl.x.toFixed(1)+" "+lctl.y.toFixed(1)+" "+clew.x.toFixed(1)+" "+clew.y.toFixed(1)+
+    "Q"+fctl.x.toFixed(1)+" "+fctl.y.toFixed(1)+" "+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"Z";
+  el("main").setAttribute("d",mainD);
+
+  var sagPx=m.sag*20;
+  var fctl2={x:(hounds.x+BOW.x)/2+sagPx*.72, y:(hounds.y+BOW.y)/2+sagPx*.62};
+  var fs=[]; for(i=0;i<=16;i++)fs.push(qpt(hounds,fctl2,BOW,i/16));
+  el("forestay").setAttribute("d",pline(fs));
+  el("sagref").setAttribute("d","M"+hounds.x.toFixed(1)+" "+hounds.y.toFixed(1)+"L"+BOW.x+" "+BOW.y);
+
+  var jclew={x:118-m_lead()*10, y:322+m_lead()*10};
+  var jl={x:(hounds.x+jclew.x)/2+7, y:(hounds.y+jclew.y)/2};
+  var jf={x:(BOW.x+jclew.x)/2, y:(BOW.y+jclew.y)/2+(1-m_jib())*7};
+  var fsr=fs.slice().reverse();
+  el("jib").setAttribute("d",pline(fsr)+"Q"+jl.x.toFixed(1)+" "+jl.y.toFixed(1)+" "+jclew.x.toFixed(1)+" "+jclew.y.toFixed(1)+
+    "Q"+jf.x.toFixed(1)+" "+jf.y.toFixed(1)+" "+BOW.x+" "+BOW.y+"Z");
+
+  [[.80,1],[.55,2],[.28,3]].forEach(function(pair){
+    var u=pair[0], n=pair[1];
+    var a=mastPt(.105+.79*u);
+    var b=qpt(headAft,lctl,clew,1-u);
+    el("stripe"+n).setAttribute("d","M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+"L"+b.x.toFixed(1)+" "+b.y.toFixed(1));
+    var f=m.draft/100;
+    el("dp"+n).setAttribute("cx",(a.x+(b.x-a.x)*f).toFixed(1));
+    el("dp"+n).setAttribute("cy",(a.y+(b.y-a.y)*f).toFixed(1));
+  });
+
+  /* standing rigging: caps run over the spreader tip, lowers hold the middle */
+  var spr=mastPt(.50), sprTip={x:spr.x+15,y:spr.y+5};
+  var chainA={x:BASE.x+27,y:DECKY-3}, chainB={x:BASE.x+19,y:DECKY-3};
+  el("spreader").setAttribute("d","M"+spr.x.toFixed(1)+" "+spr.y.toFixed(1)+"L"+sprTip.x.toFixed(1)+" "+sprTip.y.toFixed(1));
+  var cs=el("capshroud");
+  cs.setAttribute("d","M"+hounds.x.toFixed(1)+" "+hounds.y.toFixed(1)+"L"+sprTip.x.toFixed(1)+" "+sprTip.y.toFixed(1)+
+    "L"+chainA.x.toFixed(1)+" "+chainA.y);
+  cs.setAttribute("stroke-width",(.9+S.caps*1.9).toFixed(2));
+  cs.setAttribute("opacity",(.3+S.caps*.7).toFixed(2));
+  var lw=el("lowershroud");
+  lw.setAttribute("d","M"+spr.x.toFixed(1)+" "+spr.y.toFixed(1)+"L"+chainB.x.toFixed(1)+" "+chainB.y);
+  lw.setAttribute("stroke-width",(.9+S.lowers*1.9).toFixed(2));
+  lw.setAttribute("opacity",(.3+S.lowers*.7).toFixed(2));
+
+  var vangBoom={x:goose.x+34,y:goose.y+boomDy*.29};
+  var vangBase=mastPt(.045);
+  var v=el("vangline");
+  v.setAttribute("d","M"+vangBase.x.toFixed(1)+" "+vangBase.y.toFixed(1)+"L"+vangBoom.x.toFixed(1)+" "+vangBoom.y.toFixed(1));
+  v.setAttribute("stroke-width",(1+m_vang()*2.4).toFixed(2));
+  v.setAttribute("opacity",(.28+m_vang()*.72).toFixed(2));
+  var sh=el("sheetline");
+  sh.setAttribute("d","M"+clew.x.toFixed(1)+" "+clew.y.toFixed(1)+"L"+(clew.x-16).toFixed(1)+" "+DECKY);
+  sh.setAttribute("stroke-width",(1+m_main()*2).toFixed(2));
+  sh.setAttribute("opacity",(.28+m_main()*.72).toFixed(2));
+  var cu=el("cunline");
+  cu.setAttribute("d","M"+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"L"+(goose.x-3).toFixed(1)+" "+(goose.y+16+m_cun()*10).toFixed(1));
+  cu.setAttribute("stroke-width",(1+m_cun()*2.4).toFixed(2));
+  cu.setAttribute("opacity",(.25+m_cun()*.75).toFixed(2));
+
+  var wr=clamp(.85-m_cun()*2.0-m.st*.25,0,.85), wd="";
+  for(i=0;i<5;i++){
+    var t=.16+i*.15, p=mastPt(.105+.79*t);
+    wd+="M"+(p.x+4).toFixed(1)+" "+p.y.toFixed(1)+"q7 -3 15 1";
+  }
+  el("wrinkles").setAttribute("d",wd);
+  el("wrinkles").setAttribute("opacity",wr.toFixed(2));
+
+  var bl=el("bendlbl"), sl=el("saglbl"), rl=el("riglbl");
+  bl.setAttribute("x",6); bl.setAttribute("y",14);
+  bl.textContent="mast bend "+fmt(m.bend*100)+"%";
+  sl.setAttribute("x",6); sl.setAttribute("y",26);
+  sl.textContent="forestay sag "+fmt(m.sagCm)+" cm";
+  rl.setAttribute("x",6); rl.setAttribute("y",38);
+  rl.textContent="rig tension "+fmt(m.rigEq*100)+"% · rake "+fmt(m.rakeEq*100)+"%";
+}
+function m_out(){return S.out} function m_jib(){return S.jib}
+function m_lead(){return S.lead} function m_vang(){return S.vang} function m_main(){return S.main} function m_cun(){return S.cun}
+
+/* ════════ section slices ════════ */
+var ROWS=[{h:.92,y:76,cm:74,cj:0,name:"Head"},{h:.55,y:206,cm:120,cj:64,name:"Middle"},{h:.14,y:336,cm:156,cj:78,name:"Foot"}];
+var MLX=168;
+function camberPts(chord,depthPct,draftPct,n){
+  n=n||24; var D=chord*depthPct/100, p=clamp(draftPct/100,.08,.92), out=[];
+  for(var i=0;i<=n;i++){var t=i/n, u=t<p?t/p:(1-t)/(1-p);
+    out.push([t*chord, D*Math.pow(Math.sin(Math.PI/2*clamp(u,0,1)),1.12)]);}
+  return out;
+}
+function place(pts,ox,oy,deg,dy){
+  var r=deg*Math.PI/180,c=Math.cos(r),s=Math.sin(r);dy=dy||0;
+  return pts.map(function(q){var x=q[0],y=q[1]+dy;return{x:ox+x*c-y*s,y:oy+x*s+y*c}});
+}
+function arrowPath(sx,sy,ang,len){
+  var r=ang*Math.PI/180,ex=sx+len*Math.cos(r),ey=sy+len*Math.sin(r),h=6.5;
+  var a1=(ang+150)*Math.PI/180,a2=(ang-150)*Math.PI/180;
+  return "M"+sx.toFixed(1)+" "+sy.toFixed(1)+"L"+ex.toFixed(1)+" "+ey.toFixed(1)+
+    "M"+ex.toFixed(1)+" "+ey.toFixed(1)+"L"+(ex+h*Math.cos(a1)).toFixed(1)+" "+(ey+h*Math.sin(a1)).toFixed(1)+
+    "M"+ex.toFixed(1)+" "+ey.toFixed(1)+"L"+(ex+h*Math.cos(a2)).toFixed(1)+" "+(ey+h*Math.sin(a2)).toFixed(1);
+}
+(function(){
+  var host=el("sec-body");
+  ROWS.forEach(function(R){
+    var g=mk("g",{}); host.appendChild(g); var e={};
+    e.band=mk("rect",{x:2,y:R.y-64,width:360,height:122,rx:2,fill:"var(--surface-2)",opacity:".5"});
+    e.center=mk("path",{class:"s-line","stroke-dasharray":"2 5","stroke-width":1,opacity:".7"});
+    e.wind=mk("path",{class:"s-flow","stroke-width":1.4,"stroke-linecap":"round"});
+    e.windlbl=mk("text",{class:"s-lbl",fill:"var(--flow)",x:356,y:R.y-56,"text-anchor":"end"});
+    e.slotlbl=mk("text",{class:"s-lbl",fill:"var(--flow)","text-anchor":"middle"});
+    e.jfill=mk("path",{fill:"var(--jibfill)",stroke:"none",opacity:".9"});
+    e.jline=mk("path",{fill:"none",stroke:"var(--ink-2)","stroke-width":1.5,"stroke-linecap":"round"});
+    e.jchord=mk("path",{class:"s-dim","stroke-dasharray":"3 3","stroke-width":.9,opacity:".6"});
+    e.mfill=mk("path",{fill:"var(--sailfill-2)",stroke:"none"});
+    e.streak=mk("path",{class:"streak"});
+    e.mline=mk("path",{fill:"none",stroke:"var(--ink)","stroke-width":1.9,"stroke-linecap":"round"});
+    e.mchord=mk("path",{class:"s-dim","stroke-dasharray":"3 3","stroke-width":.9,opacity:".6"});
+    e.tick=mk("path",{stroke:"var(--load-2)","stroke-width":2,"stroke-linecap":"round"});
+    e.ribbon=mk("path",{fill:"none","stroke-width":1.6,"stroke-linecap":"round"});
+    e.slot=mk("path",{fill:"none","stroke-width":1.1,"stroke-dasharray":"2 2"});
+    e.bw=mk("path",{fill:"none",stroke:"var(--load-3)","stroke-width":1.4});
+    e.name=mk("text",{class:"s-lbl2",x:6,y:R.y-56});
+    e.data=mk("text",{class:"s-lbl",x:6,y:R.y-45});
+    e.data2=mk("text",{class:"s-lbl",x:6,y:R.y-34});
+    ["band","center","wind","windlbl","jfill","jline","jchord","mfill","streak","mline","mchord","tick","ribbon","slot","slotlbl","bw","name","data","data2"]
+      .forEach(function(k){g.appendChild(e[k])});
+    R.e=e;
+  });
+})();
+
+function renderSections(m){
+  ROWS.forEach(function(R){
+    var e=R.e, y=R.y;
+    var tf=clamp((R.h-.10)/.85,0,1);
+    var ang=m.boomAng+m.twist*Math.pow(tf,1.15);
+    var a=m.aw(R.h);
+    e.center.setAttribute("d","M12 "+y+"L354 "+y);
+
+    /* main */
+    var depth=R.h>.75?m.dTop:R.h>.4?m.dMid:m.dLow;
+    var draftH=m.draft+1.1-3.4*R.h;
+    var pts=camberPts(R.cm,depth,draftH);
+    var P=place(pts,MLX,y,ang);
+    var d=pline(P);
+    e.mline.setAttribute("d",d);
+    e.mfill.setAttribute("d",d+"L"+P[0].x.toFixed(1)+" "+P[0].y.toFixed(1)+"Z");
+    e.mchord.setAttribute("d","M"+P[0].x.toFixed(1)+" "+P[0].y.toFixed(1)+"L"+P[P.length-1].x.toFixed(1)+" "+P[P.length-1].y.toFixed(1));
+    var SP=place(camberPts(R.cm*1.06,depth,m.draft),MLX,y,ang,6.5);
+    e.streak.setAttribute("d",pline(SP));
+
+    /* draft tick */
+    var di=Math.round(clamp(draftH/100,0,1)*(pts.length-1));
+    var dp=P[di], cx=MLX+ (di/(pts.length-1))*R.cm, base=place([[ (di/(pts.length-1))*R.cm,0]],MLX,y,ang)[0];
+    e.tick.setAttribute("d","M"+base.x.toFixed(1)+" "+base.y.toFixed(1)+"L"+dp.x.toFixed(1)+" "+dp.y.toFixed(1));
+
+    /* angle of attack, telltales */
+    var aoa=a.ang-ang-(R.cj>0?2.5:1.0);
+    var margin=aoa-(4+.55*depth+m.aoaBonus);
+    var stall=clamp((margin-4)/7,0,1), luffing=clamp((-margin-3)/8,0,1);
+    var lastP=P[P.length-1];
+    var rAng=ang-stall*62+luffing*8;
+    var rr=rAng*Math.PI/180;
+    e.ribbon.setAttribute("d","M"+lastP.x.toFixed(1)+" "+lastP.y.toFixed(1)+
+      "q"+(9*Math.cos(rr)).toFixed(1)+" "+(9*Math.sin(rr)).toFixed(1)+" "+(19*Math.cos(rr)).toFixed(1)+" "+(19*Math.sin(rr)+2.5).toFixed(1));
+    e.ribbon.setAttribute("stroke",stall>.45?"var(--load-3)":luffing>.5?"var(--load-1)":"var(--flow)");
+    e.streak.setAttribute("opacity",(0.62-0.45*stall).toFixed(2));
+    e.streak.setAttribute("stroke",stall>.45?"var(--load-3)":"var(--flow)");
+
+    /* apparent wind arrow, aimed at the leading edge of whatever is in front */
+    var leadX=R.cj>0?(MLX-24-R.cj):MLX;
+    var endX=Math.min(leadX-12,120), endY=y-11, ra=a.ang*Math.PI/180;
+    var len=clamp(24+a.spd*1.2,24,50);
+    if(endX-len*Math.cos(ra)<8)len=Math.max(16,(endX-8)/Math.max(.25,Math.cos(ra)));
+    e.wind.setAttribute("d",arrowPath(endX-len*Math.cos(ra),endY-len*Math.sin(ra),a.ang,len));
+    e.windlbl.textContent="apparent "+fmt(a.ang)+"° / "+fmt(a.spd)+" kt";
+
+    /* jib */
+    if(R.cj>0){
+      var jang=m.jibAng+m.jibTwist*Math.pow(tf,1.15)*.9;
+      var jx=MLX-24-R.cj;
+      var JP=place(camberPts(R.cj,m.jibDepth,m.jibDraft),jx,y,jang);
+      var jd=pline(JP);
+      e.jline.setAttribute("d",jd);
+      e.jfill.setAttribute("d",jd+"L"+JP[0].x.toFixed(1)+" "+JP[0].y.toFixed(1)+"Z");
+      e.jchord.setAttribute("d","M"+JP[0].x.toFixed(1)+" "+JP[0].y.toFixed(1)+"L"+JP[JP.length-1].x.toFixed(1)+" "+JP[JP.length-1].y.toFixed(1));
+      var je=JP[JP.length-1], mtarget=P[Math.round(P.length*.16)];
+      e.slot.setAttribute("d","M"+je.x.toFixed(1)+" "+je.y.toFixed(1)+"L"+mtarget.x.toFixed(1)+" "+mtarget.y.toFixed(1));
+      e.slot.setAttribute("stroke",m.backwind>.3?"var(--load-3)":"var(--flow)");
+      e.slot.setAttribute("opacity",m.backwind>.3?".95":".5");
+      e.slotlbl.setAttribute("x",((je.x+mtarget.x)/2).toFixed(1));
+      e.slotlbl.setAttribute("y",((je.y+mtarget.y)/2+12).toFixed(1));
+      e.slotlbl.setAttribute("fill",m.backwind>.3?"var(--load-3)":"var(--flow)");
+      e.slotlbl.textContent=R.h>.4?(m.backwind>.3?"slot choked":"slot"):"";
+      var bwp="";
+      if(m.backwind>.22){var b0=P[1];
+        for(var i=0;i<3;i++)bwp+="M"+(b0.x+2+i*3).toFixed(1)+" "+(b0.y-4-i*2).toFixed(1)+"q4 -3 8 0";}
+      e.bw.setAttribute("d",bwp||"M0 0");
+      e.bw.setAttribute("opacity",m.backwind>.22?"1":"0");
+      ["jfill","jline","jchord","slot","slotlbl"].forEach(function(k){e[k].setAttribute("display","")});
+    } else {
+      ["jfill","jline","jchord","slot","slotlbl","bw"].forEach(function(k){e[k].setAttribute("display","none")});
+    }
+
+    e.name.textContent=R.name;
+    e.data.textContent=fmt(depth,1)+"% deep · "+fmt(draftH)+"% aft";
+    e.data2.textContent=fmt(ang-m.boomAng,1)+"° twist · "+fmt(aoa,1)+"° attack";
+    e.data2.setAttribute("fill",stall>.45?"var(--load-3)":luffing>.5?"var(--load-1)":"var(--ink-3)");
+  });
+}
+
+/* ════════ diagnostics ════════ */
+function diagnose(m,b,tgt){
+  var d=[],W=S.wind,up=S.mode==="upwind";
+  var deltas=CK.map(function(k){return Math.abs(tgt[k]-S[k])});
+  var worst=Math.max.apply(null,deltas), onTgt=worst<.14;
+  if(m.backwind>.3)d.push([m.backwind>.6?3:2,"crit","The jib is <b>backwinding the main</b> — the slot is choked and the front of the mainsail is working in dirty air. Ease the jib sheet or move the lead aft."]);
+  if(m.draft>m.draftIdeal+5)d.push([m.draft>m.draftIdeal+10?3:2,m.draft>m.draftIdeal+10?"crit":"warn","Draft has slid to <b>"+fmt(m.draft)+"% aft</b>. The leech is hooking, which is drag pointed sideways plus weather helm. Pull cunningham on until it is back near "+fmt(m.draftIdeal)+"%."]);
+  if(m.draft<m.draftIdeal-7)d.push([2,"warn","Draft is <b>"+fmt(m.draft)+"% — too far forward</b>. You have flattened the entry and the sail has no front end left. Ease the cunningham."]);
+  if(m.twist<b.twist-5)d.push([2,"warn","The leech is <b>"+fmt(b.twist-m.twist,1)+"° tighter</b> than this breeze wants. Watch the top telltale: it is stalled. Ease sheet or vang."]);
+  if(m.twist>b.twist+7)d.push([2,"warn","The top is <b>twisting away</b> — "+fmt(m.twist-b.twist,1)+"° more open than it needs to be, so the head is giving away drive it could keep. More vang."]);
+  if(m.heelRatio>1.3&&!onTgt)d.push([m.heelRatio>1.9?3:2,m.heelRatio>1.9?"crit":"warn","<b>Overpowered at "+fmt(m.heelRatio*100)+"% of what you can hold.</b> Everything past 100% is heel and rudder, not speed. Flatten, twist, and drop the draft forward."]);
+  if(m.heelRatio<.55&&W<13&&!onTgt)d.push([2,"warn","<b>Underpowered.</b> You are carrying tension the breeze has not asked for. Cunningham off, outhaul off, soften the vang and let the sail get fat."]);
+  if(up&&m.sagCm>13)d.push([2,"warn","Forestay sagging <b>"+fmt(m.sagCm)+" cm</b>. That is a round, powerful jib entry — lovely in waves, but it will not point. Wind the caps on."]);
+  if(m.helm>4.3&&!onTgt)d.push([2,"warn","<b>"+fmt(m.helm,1)+"° of weather helm.</b> The rudder is half on all the way up the beat, which is a brake you are steering with."]);
+  if(S.lowers>.62&&m.heelRatio>1.45)d.push([2,"warn","The lowers are still hard on, so the mast is being held straight and the bottom of the main is <b>"+fmt(m.dLow,1)+"% deep</b> in "+fmt(W)+" knots. Ease them and let the middle bow forward."]);
+  if(S.lowers<.3&&W<9)d.push([1,"warn","Lowers this slack in light air let the mast bend and pull the luff round out of the sail — you are flattening the bottom of the main just when you want it fat."]);
+  if(S.out>.55&&W<8)d.push([1,"warn","Outhaul on in "+fmt(W)+" knots — you have flattened the one part of the sail sitting in the least wind."]);
+  if(S.cun>.3&&W<8)d.push([1,"warn","Cunningham on in "+fmt(W)+" knots pulls the draft too far forward and kills the entry. Let it right off; wrinkles are fine."]);
+  if(S.mode!=="upwind"&&S.vang<.3)d.push([2,"warn","Off the wind the sheet cannot pull down at all. With the vang this soft the top of the main is just twisting away — <b>the vang is your only leech control out here</b>."]);
+  if(S.mode!=="upwind"&&S.out>.6&&W<16)d.push([1,"warn","Flat foot downwind. The bottom third is free drive and you have outhauled it away."]);
+  if(onTgt&&m.heelRatio>1.3)d.push([1,"good","Trimmed right, and <b>still carrying "+fmt(m.heelRatio*100)+"% of what two on the wire can hold</b>. In this much breeze that is the day, not a mistake — the rest comes off the boat with crew position, steering, and how hard you dump the sheet in the puffs."]);
+  if(onTgt&&m.heelRatio<.55&&W<13)d.push([1,"good","Trimmed right, and still <b>well short of the power you could hold</b>. There is no more to be had from the strings in "+fmt(W)+" knots — the gains left are in staying still, sailing slightly low and fast, and finding pressure."]);
+  if(!d.length){
+    d.push([0,"good",worst<.12?"In the groove. Depth, draft position and twist are all where this breeze wants them — now move the wind slider and watch the target marks walk away from you."
+      :"Nothing is actually broken, but you are not on the tuning target either. The orange marks on the sliders show where this breeze wants each control."]);
+  }
+  d.sort(function(a,b2){return b2[0]-a[0]});
+  return d.slice(0,4);
+}
+
+/* ════════ dossier ════════ */
+function nowLine(k,m,tgt){
+  var d=tgt[k]-S[k], dir=d>0?"more":"less", amt=Math.abs(Math.round(d*100));
+  var near=Math.abs(d)<.09;
+  switch(k){
+    case "main": return near?"About right for this breeze. Now stop cleating it.":"The target for "+fmt(S.wind)+" knots is <b>"+amt+"% "+dir+"</b> sheet than you have on.";
+    case "vang": return "Right now the vang is "+(S.vang*.96>=(S.mode==="upwind"?S.main:S.main*.3)?"<b>the thing setting your leech</b>":"slack — <b>the mainsheet is setting your leech</b>")+", and it is bending the mast to "+fmt(m.bend*100)+"%.";
+    case "cun": return "Draft is sitting at <b>"+fmt(m.draft)+"% aft</b>; you want about "+fmt(m.draftIdeal)+"%. "+(m.draft>m.draftIdeal+3.5?"That is cunningham you have not pulled on yet.":m.draft<m.draftIdeal-5?"That is more cunningham than this breeze needs.":"Which is where it should be.");
+    case "out": return "Bottom third is <b>"+fmt(m.dLow,1)+"% deep</b>. Fat is roughly 12%+, flat is under 8%.";
+    case "jib": return "Slot is <b>"+(m.backwind>.3?"choked — the main is backwinding":m.slotOpen>.85?"very open; the jib is not doing much":"clean")+"</b> at the moment.";
+    case "lead": return "Jib twist is <b>"+fmt(m.jibTwist)+"°</b>. Forward moves load into the leech, aft moves it into the foot.";
+    case "caps": return "Overall rig tension is <b>"+fmt(m.rigEq*100)+"%</b> and the forestay is sagging <b>"+fmt(m.sagCm)+" cm</b>, putting the jib draft at "+fmt(m.jibDraft)+"% aft.";
+    case "lowers": return "Mast bend is <b>"+fmt(m.bend*100)+"%</b>, and the bottom of the main is "+fmt(m.dLow,1)+"% deep. "+(S.lowers>.6?"Held fairly straight.":S.lowers<.35?"Free to bow forward — that is where the flat bottom is coming from.":"Middle of the range.");
+    case "forestay": return "Rake is <b>"+fmt(m.rakeEq*100)+"%</b>"+(m.rakeEq>.34?", cutting the heeling lever by "+fmt(m.rakeEq*22)+"% and adding about "+fmt((m.rakeEq-.3)*2.2,1)+"° of weather helm":" — the rig is standing up, so it is adding no helm of its own")+". It has left rig tension at "+fmt(m.rigEq*100)+"%; every bit you let out here, the caps have to make back up.";
+  }
+  return "";
+}
+function renderDossier(m,tgt){
+  var c=CONTROLS.filter(function(x){return x.k===selected})[0];
+  el("dos-eyebrow").innerHTML="04 · "+c.name;
+  el("dossier").innerHTML='<p class="prose" style="font-size:15.5px;margin:0 0 12px">'+c.blurb+'</p>'+
+    '<dl><dt>Right now</dt><dd>'+nowLine(c.k,m,tgt)+'</dd>'+
+    '<dt>Light air</dt><dd>'+c.light+'</dd>'+
+    '<dt>Breeze on</dt><dd>'+c.heavy+'</dd></dl>';
+}
+
+/* ════════ main render ════════ */
+function render(){
+  var m=model(S), tgt=targetState(S), b=model(tgt);
+  var score=clamp(m.speedIdx/Math.max(b.speedIdx,1e-6),0,1)*100;
+
+  el("w-val").textContent=S.wind.toFixed(S.wind%1?1:0);
+  el("wind").value=S.wind;
+  el("w-load").textContent=(Math.pow(S.wind/10,2)).toFixed(2)+"×";
+  el("w-note").textContent="apparent "+fmt(m.awMid.spd)+" kt at "+fmt(m.awMid.ang)+"°";
+
+  CONTROLS.forEach(function(c){
+    var v=S[c.k];
+    rangeEls[c.k].value=v;
+    rangeEls[c.k].style.setProperty("--p",v);
+    rangeEls[c.k].setAttribute("aria-valuetext",Math.round(v*100)+" percent");
+    valEls[c.k].textContent=Math.round(v*100);
+    targetEls[c.k].style.setProperty("--t",tgt[c.k]);
+    var d=tgt[c.k]-v, n=Math.round(d*100);
+    var dd=deltaEls[c.k];
+    if(Math.abs(n)<9){dd.textContent="on target";dd.className="d mono ok"}
+    else{dd.textContent=(n>0?"+":"")+n;dd.className="d mono hi"}
+    rowEls[c.k].classList.toggle("sel",c.k===selected);
+  });
+
+  renderRig(m); renderSections(m);
+
+  var T=tileEls;
+  T.depth.v.textContent=fmt(m.dMid,1)+"%";
+  T.depth.n.textContent=m.dMid>12?"Fat — full power sail":m.dMid<8?"Flat — depowered":"Medium camber";
+  T.draft.v.textContent=fmt(m.draft)+"%";
+  var de=Math.abs(m.draft-m.draftIdeal);
+  T.draft.v.style.color=de>5.5?"var(--load-3)":de>3?"var(--load-2)":"var(--flow)";
+  T.draft.n.textContent=m.draft>m.draftIdeal+3.5?"Aft of where you want it — leech hooking":m.draft<m.draftIdeal-3.5?"Forward — entry going flat":"Where it should be, near "+fmt(m.draftIdeal)+"%";
+  T.twist.v.textContent=fmt(m.twist,1)+"°";
+  T.twist.n.textContent="This breeze wants about "+fmt(b.twist,1)+"°";
+  T.shear.v.textContent=fmt(m.shear,1)+"°";
+  T.shear.n.textContent="Apparent wind swings "+fmt(m.shear,1)+"° aft between foot and head — the twist you owe the wind";
+  T.sag.v.textContent=fmt(m.sagCm)+"cm";
+  T.sag.n.textContent=m.sagCm>13?"Round, powerful jib entry — will not point":"Straight enough to point";
+  T.power.v.textContent=fmt(m.heelRatio*100)+"%";
+  T.power.bar.style.width=clamp(m.heelRatio/1.9,0,1)*100+"%";
+  T.power.bar.style.background=m.heelRatio>1.25?"var(--load-3)":m.heelRatio>1?"var(--load-2)":"var(--flow)";
+  T.power.n.textContent=m.heelRatio>1.15?"Past what two on the wire can hold":m.heelRatio<.6?"Room for a lot more power":"Fully powered, hanging on";
+  T.helm.v.textContent=fmt(m.helm,1)+"°";
+  T.helm.n.textContent=m.helm>4?"Heavy — rudder acting as a brake":m.helm<.6?"Light to neutral — losing feel":"Light and positive, about right";
+  T.speed.v.textContent=fmt(m.boatSpeed,1);
+  T.speed.n.textContent="knots, "+(S.mode==="upwind"?"pointing "+fmt(m.pointing)+"/100":"with the kite up");
+
+  var dot=el("v-dot"),txt=el("v-txt");
+  var col=score>92?"var(--flow)":score>78?"var(--load-1)":score>60?"var(--load-2)":"var(--load-3)";
+  dot.style.background=col;
+  el("v-score").textContent=fmt(score)+" / 100";
+  el("v-score").style.color=col;
+  txt.textContent=score>92?"That is the shape":score>78?"Close — one or two strings out":score>60?"Working, but leaving a lot behind":"Wrong shape for this breeze";
+
+  var dl=el("diag");
+  dl.innerHTML=diagnose(m,b,tgt).map(function(x){
+    return '<li><span class="sig '+x[1]+'">'+(x[1]==="crit"?"FIX":x[1]==="warn"?"WATCH":"GOOD")+'</span><span>'+x[2]+'</span></li>';
+  }).join("");
+
+  renderDossier(m,tgt);
+  return m;
+}
+
+/* ════════ wiring ════════ */
+el("wind").addEventListener("input",function(){S.wind=parseFloat(this.value);stopDemo();render()});
+Array.prototype.forEach.call(document.querySelectorAll(".modes button"),function(btn){
+  btn.addEventListener("click",function(){
+    S.mode=btn.dataset.mode;
+    Array.prototype.forEach.call(document.querySelectorAll(".modes button"),function(b){
+      b.setAttribute("aria-pressed",String(b===btn))});
+    stopDemo();render();
+  });
+});
+function animateTo(target,ms,done){
+  var from={},t0=null,keys=CK.slice();
+  keys.forEach(function(k){from[k]=S[k]});
+  if(reduce){keys.forEach(function(k){S[k]=target[k]});render();if(done)done();return}
+  function step(ts){
+    if(t0===null)t0=ts;
+    var p=clamp((ts-t0)/ms,0,1),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    keys.forEach(function(k){S[k]=from[k]+(target[k]-from[k])*e});
+    render();
+    if(p<1)requestAnimationFrame(step); else if(done)done();
+  }
+  requestAnimationFrame(step);
+}
+el("btn-auto").addEventListener("click",function(){stopDemo();animateTo(targetState(S),900)});
+el("btn-soft").addEventListener("click",function(){stopDemo();
+  animateTo({main:.45,vang:.08,cun:0,out:.15,jib:.45,lead:.3,caps:.15,lowers:.35,forestay:.08},700)});
+
+/* ════════ the breeze demo ════════ */
+var CAP0=el("demo-cap").innerHTML;
+function stopDemo(){if(demo){cancelAnimationFrame(demo);demo=null;el("btn-build").textContent="Let the breeze build"}}
+el("btn-build").addEventListener("click",function(){
+  if(demo){stopDemo();return}
+  stopDemo();
+  var m0=model(S), d0=m0.draft, t0v=m0.twist, w0=S.wind;
+  var start=null, dur=reduce?1:5200, from=S.wind, to=Math.max(22,S.wind+9);
+  el("btn-build").textContent="Stop";
+  function step(ts){
+    if(start===null)start=ts;
+    var p=clamp((ts-start)/dur,0,1);
+    S.wind=from+(to-from)*p;
+    var m=render();
+    el("demo-cap").innerHTML="Wind <b>"+fmt(S.wind,1)+" kts</b> and not one string has moved. Rig load is now <b>"+
+      (Math.pow(S.wind/w0,2)).toFixed(2)+"×</b> what it was. Draft has walked from "+fmt(d0)+"% to <b>"+fmt(m.draft)+
+      "% aft</b>, the leech has gone from "+fmt(t0v,1)+"° to <b>"+fmt(m.twist,1)+"°</b> of twist, and you are holding <b>"+
+      fmt(m.heelRatio*100)+"%</b> of what two people on the wire can carry.";
+    if(p<1)demo=requestAnimationFrame(step);
+    else{demo=null;el("btn-build").textContent="Let the breeze build";
+      el("demo-cap").innerHTML+=" <b>Nothing here is your fault — this is just what pressure does.</b> Press <b>Now re-tune it</b> to put the shape back.";}
+  }
+  demo=requestAnimationFrame(step);
+});
+el("btn-fix").addEventListener("click",function(){
+  stopDemo();
+  var before=model(S);
+  animateTo(targetState(S),1400,function(){
+    var m=model(S);
+    el("demo-cap").innerHTML="Same wind, same sails. Cunningham and outhaul pulled the draft from "+fmt(before.draft)+
+      "% back to <b>"+fmt(m.draft)+"% aft</b>, vang and rig tension took the camber from "+fmt(before.dMid,1)+"% to <b>"+
+      fmt(m.dMid,1)+"%</b>, and the load you are carrying dropped from "+fmt(before.heelRatio*100)+"% to <b>"+
+      fmt(m.heelRatio*100)+"%</b> of your limit. <b>That is what tension buys you: the shape you had in the light, at "+fmt(S.wind)+" knots.</b>";
+  });
+});
+
+window.i14={model:model,target:targetState,state:S,render:render};
+render();
+})();
+</script>
