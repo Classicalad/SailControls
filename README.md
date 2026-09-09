@@ -3,7 +3,7 @@
 An interactive model of what every string on an i14 actually does to the shape of the
 sails, and why the right answer changes as the breeze builds.
 
-**[i14-trim-lab.html](i14-trim-lab.html)** — open it in any browser. Single file, no build
+**[index.html](index.html)** — open it in any browser. Single file, no build
 step, no dependencies. Fonts load from Google Fonts; everything else runs offline.
 
 ## What it does
