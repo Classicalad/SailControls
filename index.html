@@ -847,13 +847,19 @@ function renderRig(m){
   var clew={x:goose.x+118, y:goose.y+boomDy};
   el("boom").setAttribute("d","M"+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"L"+clew.x.toFixed(1)+" "+clew.y.toFixed(1));
 
-  var headW=12+26*Math.cos(clamp(m.twist*1.6,0,80)*Math.PI/180);
-  var headAft={x:tip.x+headW, y:tip.y+7};
-  var roach=8+14*(1-m.twist/46);
-  var lctl={x:(headAft.x+clew.x)/2+roach, y:(headAft.y+clew.y)/2};
+  /* Square top. The luff runs right to the masthead and the head is a wide, near
+     horizontal edge — on a 14 it is getting on for half the foot length. It stays
+     square whatever the leech is doing; twist is the sections panel's story to tell,
+     not something to foreshorten the head away with. */
+  var headTop=mastPt(.985), boomLen=clew.x-goose.x;
+  var headW=boomLen*(.44-.05*(m.twist/46));
+  var headAft={x:headTop.x+headW, y:headTop.y+5+headW*.13};
+  /* roach carried high, the way a full-batten square top is cut */
+  var roach=20+12*(1-m.twist/46);
+  var lctl={x:(headAft.x+clew.x)/2+roach, y:headAft.y+(clew.y-headAft.y)*.42};
   var fctl={x:(goose.x+clew.x)/2, y:(goose.y+clew.y)/2+(1-m_out())*9};
 
-  var luff=[]; for(i=0;i<=18;i++)luff.push(mastPt(.105+.79*(i/18)));
+  var luff=[]; for(i=0;i<=20;i++)luff.push(mastPt(.105+.88*(i/20)));
   var mainD=pline(luff)+"L"+headAft.x.toFixed(1)+" "+headAft.y.toFixed(1)+
     "Q"+lctl.x.toFixed(1)+" "+lctl.y.toFixed(1)+" "+clew.x.toFixed(1)+" "+clew.y.toFixed(1)+
     "Q"+fctl.x.toFixed(1)+" "+fctl.y.toFixed(1)+" "+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"Z";
@@ -874,7 +880,7 @@ function renderRig(m){
 
   [[.80,1],[.55,2],[.28,3]].forEach(function(pair){
     var u=pair[0], n=pair[1];
-    var a=mastPt(.105+.79*u);
+    var a=mastPt(.105+.88*u);
     var b=qpt(headAft,lctl,clew,1-u);
     el("stripe"+n).setAttribute("d","M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+"L"+b.x.toFixed(1)+" "+b.y.toFixed(1));
     var f=m.draft/100;
@@ -954,7 +960,7 @@ function renderRig(m){
 
   var wr=clamp(.85-m_cun()*2.0-m.st*.25,0,.85), wd="";
   for(i=0;i<5;i++){
-    var t=.16+i*.15, p=mastPt(.105+.79*t);
+    var t=.16+i*.15, p=mastPt(.105+.88*t);
     wd+="M"+(p.x+4).toFixed(1)+" "+p.y.toFixed(1)+"q7 -3 15 1";
   }
   el("wrinkles").setAttribute("d",wd);
@@ -972,7 +978,7 @@ function m_out(){return S.out} function m_jib(){return S.jib}
 function m_lead(){return S.lead} function m_vang(){return S.vang} function m_main(){return S.main} function m_cun(){return S.cun}
 
 /* ════════ section slices ════════ */
-var ROWS=[{h:.92,y:76,cm:74,cj:0,name:"Head"},{h:.55,y:206,cm:120,cj:64,name:"Middle"},{h:.14,y:336,cm:156,cj:78,name:"Foot"}];
+var ROWS=[{h:.92,y:76,cm:90,cj:0,name:"Head"},{h:.55,y:206,cm:120,cj:64,name:"Middle"},{h:.14,y:336,cm:156,cj:78,name:"Foot"}];
 var MLX=168;
 function camberPts(chord,depthPct,draftPct,n){
   n=n||24; var D=chord*depthPct/100, p=clamp(draftPct/100,.08,.92), out=[];
