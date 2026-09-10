@@ -313,7 +313,8 @@ tr:last-child td{border-bottom:0}
         <path id="tackline" fill="none" stroke="var(--load-2)" stroke-width="1.3"/>
         <path id="main" class="sailA"/>
         <path id="battens" fill="none" stroke="var(--ink-3)" stroke-width=".9" opacity=".75"/>
-        <path id="pockets" fill="none" stroke="var(--ink-2)" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+        <path id="pockets" fill="none" stroke="var(--ink-2)" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>
+        <path id="shortb" fill="none" stroke="var(--ink-2)" stroke-width="2.6" stroke-linecap="butt" opacity=".7"/>
         <circle id="dp1" r="2.6" fill="var(--load-2)"/><circle id="dp2" r="2.6" fill="var(--load-2)"/><circle id="dp3" r="2.6" fill="var(--load-2)"/>
         <path id="capshroud" fill="none" stroke="var(--ink-2)" stroke-linecap="round"/>
         <path id="lowershroud" fill="none" stroke="var(--ink-2)" stroke-linecap="round"/>
@@ -1028,27 +1029,42 @@ function renderRig(m){
   el("jib").setAttribute("d",pline(fsr)+"Q"+jl.x.toFixed(1)+" "+jl.y.toFixed(1)+" "+jclew.x.toFixed(1)+" "+jclew.y.toFixed(1)+
     "Q"+jf.x.toFixed(1)+" "+jf.y.toFixed(1)+" "+BOW.x+" "+BOW.y+"Z");
 
-  /* Full-length battens, luff to leech, the way an i14 main is built. They take up
-     the sail's shape: a deep section loads its battens into a visible bow, and they
-     straighten out as the mast bend and the outhaul flatten the sail. */
-  var bd="", pk="", dotN=0;
-  [.07,.24,.41,.58,.75,.92].forEach(function(u,ix){
-    var a=mastPt(.105+.88*u), b=qpt(headAft,lctl,clew,1-u);
-    var camb=curve([[0,m.dLow],[.5,m.dMid],[1,m.dTop]],u);
+  /* Batten layout taken from a P&B i14 square-top main. Five full-length battens
+     that FAN — the top one runs steeply up to the head, roughly parallel to the
+     square head edge, and they flatten to horizontal by the foot — with short leech
+     battens filling in between them. Each is paired as [leech position, luff
+     position], both as a fraction from clew/gooseneck up to head. They flex with the
+     sail: a deep section bows its battens, flattening straightens them. The top one is
+     the odd one out — it runs from the head corner diagonally down to the luff to hold
+     the square head out, and is the only strongly angled batten in the sail. */
+  var FULLB=[[.99,.80],[.78,.75],[.57,.55],[.37,.36],[.17,.17]];
+  var SHORTB=[.88,.67,.47,.27];
+  var bd="", pk="", sb="", dotN=0;
+  FULLB.forEach(function(pr,ix){
+    var a=mastPt(.105+.88*pr[1]), b=qpt(headAft,lctl,clew,1-pr[0]);
+    var camb=curve([[0,m.dLow],[.5,m.dMid],[1,m.dTop]],pr[1]);
     var c=bulge(a,b,-(camb-5.5)*.62);
     bd+="M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+"Q"+c.x.toFixed(1)+" "+c.y.toFixed(1)+" "+b.x.toFixed(1)+" "+b.y.toFixed(1);
-    /* the batten pocket, sitting off the leech end */
-    var near=qpt(a,c,b,.86);
-    pk+="M"+near.x.toFixed(1)+" "+near.y.toFixed(1)+"L"+b.x.toFixed(1)+" "+b.y.toFixed(1);
-    if(ix===1||ix===3||ix===4){
+    /* pocket with its tensioner end, standing slightly proud of the leech */
+    var near=qpt(a,c,b,.87), dx=b.x-near.x, dy=b.y-near.y, L=Math.sqrt(dx*dx+dy*dy)||1;
+    pk+="M"+near.x.toFixed(1)+" "+near.y.toFixed(1)+
+        "L"+(b.x+dx/L*3.2).toFixed(1)+" "+(b.y+dy/L*3.2).toFixed(1);
+    if(ix===1||ix===2||ix===3){
       dotN++;
       var dp=qpt(a,c,b,clamp(m.draft/100,0,1));
       el("dp"+dotN).setAttribute("cx",dp.x.toFixed(1));
       el("dp"+dotN).setAttribute("cy",dp.y.toFixed(1));
     }
   });
+  SHORTB.forEach(function(t){
+    var b=qpt(headAft,lctl,clew,1-t), a=mastPt(.105+.88*clamp(t-.03,0,1));
+    var dx=a.x-b.x, dy=a.y-b.y, L=Math.sqrt(dx*dx+dy*dy)||1;
+    sb+="M"+(b.x+dx/L*L*.24).toFixed(1)+" "+(b.y+dy/L*L*.24).toFixed(1)+
+        "L"+(b.x-dx/L*3.2).toFixed(1)+" "+(b.y-dy/L*3.2).toFixed(1);
+  });
   el("battens").setAttribute("d",bd);
   el("pockets").setAttribute("d",pk);
+  el("shortb").setAttribute("d",sb);
 
   /* standing rigging: caps run over the spreader tip, lowers hold the middle */
   var spr=mastPt(.50), sprTip={x:spr.x+15,y:spr.y+5};
