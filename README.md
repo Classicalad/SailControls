@@ -41,8 +41,16 @@ from boats that genuinely run dead square, and it does not transfer to a skiff.
 Rig tension and rake are *derived*, not controls, because that is how the boat works: you
 adjust three wires and those two things are what you are left with.
 
-Two views: the rig in side elevation (mast bend against a straight reference, forestay sag,
-standing rigging, boom angle, luff wrinkles, foot depth) and three horizontal slices seen
+The side elevation is drawn to class-rule scale — hull 4267 mm, rig 7626 mm above the
+gunwale, spinnaker boom reaching 2743 mm beyond the bow, all at 0.0455 px/mm — which is
+why the pole looks as long as it does. It is meant to.
+
+Two views: the rig in side elevation (i14 hull with racks, daggerboard and T-foil rudder,
+mast bend against a straight reference, forestay sag, standing rigging, boom angle, luff
+wrinkles, foot depth, and a batten layout taken from a P&B i14 square-top
+main: five full-length battens alternating with four short leech battens, the top one
+running diagonally from the head corner to hold the square head out, all of them bowing
+with the sail's camber and straightening as you flatten it) and three horizontal slices seen
 from above at head, middle and foot — camber, draft position, twist, the apparent wind
 angle at that height, and a leech telltale that streams, hooks or lifts.
 
