@@ -41,8 +41,10 @@ from boats that genuinely run dead square, and it does not transfer to a skiff.
 Rig tension and rake are *derived*, not controls, because that is how the boat works: you
 adjust three wires and those two things are what you are left with.
 
-Two views: the rig in side elevation (mast bend against a straight reference, forestay sag,
-standing rigging, boom angle, luff wrinkles, foot depth) and three horizontal slices seen
+Two views: the rig in side elevation (i14 hull with racks, daggerboard and T-foil rudder,
+mast bend against a straight reference, forestay sag, standing rigging, boom angle, luff
+wrinkles, foot depth, and full-length battens that bow with the sail's camber and
+straighten as you flatten it) and three horizontal slices seen
 from above at head, middle and foot — camber, draft position, twist, the apparent wind
 angle at that height, and a leech telltale that streams, hooks or lifts.
 
