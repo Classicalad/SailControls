@@ -116,6 +116,7 @@ h3{font-size:16px;font-weight:700}
 .card-hd .rule{flex:1;height:1px;background:var(--line-soft)}
 .card-bd{padding:12px 14px 14px}
 .card svg{display:block;width:100%;height:auto;overflow:visible}
+#rig-body{transition:transform .45s cubic-bezier(.4,0,.2,1)}
 
 /* ── controls ───────────────────────────────────────────── */
 .ctrl{padding:9px 0 11px;border-bottom:1px dashed var(--line-soft)}
@@ -296,13 +297,14 @@ tr:last-child td{border-bottom:0}
     <div class="card-bd">
       <svg id="rig" viewBox="0 0 336 430" role="img" aria-labelledby="rig-t">
         <title id="rig-t">Side elevation of the rig showing mast bend, forestay sag, boom angle and sail depth</title>
+        <line x1="4" y1="389" x2="332" y2="389" class="s-line" stroke-width="1"/>
+        <g id="rig-body">
         <g id="rig-static">
           <path id="board" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
           <path id="rudder" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
           <path id="tfoil" fill="none" stroke="var(--ink-3)" stroke-width="2.2" stroke-linecap="round"/>
           <path id="hull" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.2"/>
           <path id="racks" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".6"/>
-          <line x1="4" y1="389" x2="332" y2="389" class="s-line" stroke-width="1"/>
         </g>
         <path id="sprit" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
         <path id="forestay" class="s-ink" stroke-width="1.2"/>
@@ -329,6 +331,7 @@ tr:last-child td{border-bottom:0}
         <path id="sheetline" fill="none" stroke="var(--load-2)" stroke-width="1.4"/>
         <path id="cunline" fill="none" stroke="var(--load-2)" stroke-width="1.6"/>
         <path id="wrinkles" class="s-dim" stroke-width=".8" opacity=".75"/>
+        </g>
         <g id="rig-labels"></g>
       </svg>
     </div>
@@ -1176,6 +1179,12 @@ function renderRig(m){
   }
   el("wrinkles").setAttribute("d",wd);
   el("wrinkles").setAttribute("opacity",wr.toFixed(2));
+
+  /* Centre the boat in its frame. Stowed, that is hull and rig alone; with the pole
+     out the pole is part of the picture, so the whole lot re-centres and the boat
+     slides right to make room for it. */
+  var leftEdge=m.kiteUp?SPRIT.x:BOWX, rightEdge=TRANSOMX+6.5;   /* boom end and leech roach reach past the transom */
+  el("rig-body").style.transform="translate("+(168-(leftEdge+rightEdge)/2).toFixed(1)+"px,0)";
 
   var bl=el("bendlbl"), sl=el("saglbl"), rl=el("riglbl");
   bl.setAttribute("x",6); bl.setAttribute("y",14);
