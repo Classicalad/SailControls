@@ -302,12 +302,15 @@ tr:last-child td{border-bottom:0}
           <path id="tfoil" fill="none" stroke="var(--ink-3)" stroke-width="2.2" stroke-linecap="round"/>
           <path id="hull" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.2"/>
           <path id="racks" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".6"/>
-          <line x1="8" y1="405" x2="328" y2="405" class="s-line" stroke-width="1"/>
+          <line x1="4" y1="389" x2="332" y2="389" class="s-line" stroke-width="1"/>
         </g>
         <path id="sprit" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
         <path id="forestay" class="s-ink" stroke-width="1.2"/>
         <path id="sagref" class="s-dim" stroke-width="1" stroke-dasharray="3 3" opacity=".8"/>
         <path id="jib" class="sailB"/>
+        <path id="jibbattens" fill="none" stroke="var(--ink-3)" stroke-width=".8" opacity=".7"/>
+        <path id="jibpockets" fill="none" stroke="var(--ink-2)" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+        <path id="jibsheet" fill="none" stroke="var(--load-2)" stroke-width="1.4"/>
         <path id="kite" fill="var(--flow)" fill-opacity=".16" stroke="var(--flow)" stroke-width="1.3"/>
         <path id="kiteluff" fill="none" stroke="var(--flow)" stroke-width="2.4" stroke-linecap="round"/>
         <path id="tackline" fill="none" stroke="var(--load-2)" stroke-width="1.3"/>
@@ -963,21 +966,31 @@ var tileEls={};
 })();
 
 /* ════════ rig elevation geometry ════════ */
-var BASE={x:176,y:388}, BOW={x:58,y:376}, DECKY=388, SPRIT={x:16,y:378};
+/* Scale is taken from the class rules rather than guessed: hull 4267mm, rig 7626mm
+   above the gunwale, and the spinnaker boom may reach 2743mm beyond the bow — which
+   is nearly two thirds of the boat's length again out in front of it. 0.0455 px per
+   mm fits all three in the frame. */
+var MMPX=.0455;
+var BOWX=133, DECKY=371, HULLL=4267*MMPX, TRANSOMX=BOWX+HULLL;
+var BASE={x:BOWX+HULLL*.42, y:DECKY};
+var BOW={x:BOWX+3, y:DECKY-7};
+var SPRIT={x:BOWX-2743*MMPX, y:DECKY-13};
 function qpt(p0,p1,p2,t){var u=1-t;return{x:u*u*p0.x+2*u*t*p1.x+t*t*p2.x, y:u*u*p0.y+2*u*t*p1.y+t*t*p2.y}}
 function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)}).join(" ")}
 (function(){
   /* i14 profile: near-plumb stem, low freeboard, almost no rocker in the run aft,
      and a transom that stops dead at the waterline */
+  /* fine plumb stem, low freeboard, next to no rocker in the run aft */
   el("hull").setAttribute("d",
-    "M56 376 Q50 388 50 400 Q112 407 190 407 Q268 406 316 404 L319 385 Q190 391 56 376 Z");
+    "M140 357 C134 364 131 374 133 387 Q196 393 254 391 Q302 390 326 388 L327 368 "+
+    "Q240 376 140 357 Z");
   /* the racks, which on a 14 are most of the boat's beam */
   el("racks").setAttribute("d",
-    "M64 372 Q190 381 318 378 M104 375 L106 385 M190 381 L190 388 M272 379 L271 387");
+    "M146 352 Q238 363 320 360 M176 356 L177 368 M238 363 L238 372 M292 361 L291 370");
   /* daggerboard and the T-foil rudder */
-  el("board").setAttribute("d","M181 404 L189 404 L192 427 L186 427 Z");
-  el("rudder").setAttribute("d","M313 402 L319 400 L321 423 L316 423 Z");
-  el("tfoil").setAttribute("d","M306 423 Q318 426 331 422");
+  el("board").setAttribute("d","M219 386 L227 386 L230 427 L224 427 Z");
+  el("rudder").setAttribute("d","M320 384 L326 382 L328 421 L323 421 Z");
+  el("tfoil").setAttribute("d","M312 421 Q324 424 334 420");
   var L=el("rig-labels");
   ["bendlbl","saglbl","riglbl"].forEach(function(id,i){
     var t=mk("text",{id:id,class:"s-lbl",x:0,y:0}); L.appendChild(t);
@@ -985,7 +998,7 @@ function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(
 })();
 
 function renderRig(m){
-  var tip={x:BASE.x+m.rakeEq*30, y:30+m.rakeEq*13};
+  var tip={x:BASE.x+m.rakeEq*30, y:(DECKY-7626*MMPX)+m.rakeEq*13};
   var mid={x:(BASE.x+tip.x)/2 - m.bend*26, y:(BASE.y+tip.y)/2};
   var mastPt=function(t){return qpt(BASE,mid,tip,t)};
   var pts=[],i;
@@ -993,9 +1006,9 @@ function renderRig(m){
   el("mast").setAttribute("d",pline(pts));
   el("mastref").setAttribute("d","M"+BASE.x+" "+BASE.y+"L"+tip.x.toFixed(1)+" "+tip.y.toFixed(1));
 
-  var goose=mastPt(.105), hounds=mastPt(.895);
+  var goose=mastPt(.105), hounds=mastPt(.85);
   var boomDy=-10+14*m.leechCmd;
-  var clew={x:goose.x+118, y:goose.y+boomDy};
+  var clew={x:goose.x+100, y:goose.y+boomDy};
   el("boom").setAttribute("d","M"+goose.x.toFixed(1)+" "+goose.y.toFixed(1)+"L"+clew.x.toFixed(1)+" "+clew.y.toFixed(1));
 
   /* Square top. The luff runs right to the masthead and the head is a wide, near
@@ -1022,12 +1035,32 @@ function renderRig(m){
   el("forestay").setAttribute("d",pline(fs));
   el("sagref").setAttribute("d","M"+hounds.x.toFixed(1)+" "+hounds.y.toFixed(1)+"L"+BOW.x+" "+BOW.y);
 
-  var jclew={x:118-m_lead()*10, y:322+m_lead()*10};
+  var jclew={x:BOW.x+50+m_lead()*10, y:DECKY-54+m_lead()*5};
   var jl={x:(hounds.x+jclew.x)/2+7, y:(hounds.y+jclew.y)/2};
   var jf={x:(BOW.x+jclew.x)/2, y:(BOW.y+jclew.y)/2+(1-m_jib())*7};
   var fsr=fs.slice().reverse();
   el("jib").setAttribute("d",pline(fsr)+"Q"+jl.x.toFixed(1)+" "+jl.y.toFixed(1)+" "+jclew.x.toFixed(1)+" "+jclew.y.toFixed(1)+
     "Q"+jf.x.toFixed(1)+" "+jf.y.toFixed(1)+" "+BOW.x+" "+BOW.y+"Z");
+
+  /* the sheet, and the lead it runs to — moving the lead aft walks both of them back */
+  var jlead={x:BASE.x-30+m_lead()*36, y:DECKY-3};
+  var js=el("jibsheet");
+  js.setAttribute("d","M"+jclew.x.toFixed(1)+" "+jclew.y.toFixed(1)+"L"+jlead.x.toFixed(1)+" "+jlead.y.toFixed(1));
+  js.setAttribute("stroke-width",(1+m_jib()*1.9).toFixed(2));
+  js.setAttribute("opacity",(.3+m_jib()*.7).toFixed(2));
+
+  /* three full-length battens, which is what an i14 jib carries */
+  var jbd="", jbp="";
+  [.28,.52,.76].forEach(function(u){
+    var a=qpt(hounds,fctl2,BOW,1-u), b=qpt(hounds,jl,jclew,1-u);
+    var c=bulge(a,b,-(m.jibDepth-5)*.42);
+    jbd+="M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+"Q"+c.x.toFixed(1)+" "+c.y.toFixed(1)+" "+b.x.toFixed(1)+" "+b.y.toFixed(1);
+    var near=qpt(a,c,b,.86), dx=b.x-near.x, dy=b.y-near.y, L=Math.sqrt(dx*dx+dy*dy)||1;
+    jbp+="M"+near.x.toFixed(1)+" "+near.y.toFixed(1)+
+         "L"+(b.x+dx/L*2.6).toFixed(1)+" "+(b.y+dy/L*2.6).toFixed(1);
+  });
+  el("jibbattens").setAttribute("d",jbd);
+  el("jibpockets").setAttribute("d",jbp);
 
   /* Batten layout taken from a P&B i14 square-top main. Five full-length battens
      that FAN — the top one runs steeply up to the head, roughly parallel to the
@@ -1084,11 +1117,11 @@ function renderRig(m){
   var kEls=["kite","kiteluff","sprit","tackline"];
   if(m.kiteUp){
     kEls.forEach(function(id){el(id).setAttribute("display","")});
-    el("sprit").setAttribute("d","M"+BOW.x+" "+(BOW.y+4)+"L"+SPRIT.x+" "+SPRIT.y);
+    el("sprit").setAttribute("d","M"+(BOWX+4)+" "+(DECKY-5)+"L"+SPRIT.x.toFixed(1)+" "+SPRIT.y);
     /* tack rides up the luff as the tack line is eased */
-    var tack={x:SPRIT.x+4, y:SPRIT.y-58*(1-S.tack)};
+    var tack={x:SPRIT.x+3, y:SPRIT.y-54*(1-S.tack)};
     var head=mastPt(.93); head={x:head.x-6, y:head.y+6};
-    var clew={x:BOW.x+116, y:BOW.y-140};
+    var clew={x:BOW.x+108, y:BOW.y-150};
     /* belly of the kite — fuller with the tack up */
     var fullness=clamp((m.kiteDepth-16)/6,0,1.1);
     var lc=bulge(tack,head,-(30+24*fullness));
