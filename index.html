@@ -13,6 +13,7 @@
   --cloth:#F2F1EA; --cloth-2:#E4E2D7;
   --ink:#0B1020; --flare:#FF4A17; --sun:#FFC42E;
   --pad:clamp(14px,3vw,34px);
+  color-scheme:light;                   /* one visual world — no dark variant */
 
   /* names below are the interface to the drawing code — values change, keys don't */
   --ground:var(--sea); --ground-2:var(--cloth-2);
@@ -26,32 +27,6 @@
   --deep:#0B1020; --knock:#F2F1EA;      /* dark bars, and the text knocked out of them */
   --on-flow:#F2F1EA; --tick:#0B1020; --shadow:none;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --sea:#060C1C; --sea-2:#030711;
-  --cloth:#141B2D; --cloth-2:#1D2539;
-  --ink:#E9E9E2; --flare:#FF6A3D; --sun:#FFD15C;
-  --ink-2:#AEB4C4; --ink-3:#7D8497;
-  --line:#2B3550; --line-soft:#222B42;
-  --flow:#5B9BFF; --flow-2:#84B5FF; --flow-wash:rgba(91,155,255,.14);
-  --load-1:#E8B63F; --load-2:#FF8A45; --load-3:#FF5C43;
-  --sailfill:#1C2437; --sailfill-2:#182034; --jibfill:#212B44;
-  --flare-ink:#FF8A5E;
-  --deep:#27314B; --knock:#EFEFE8;
-  --on-flow:#060C1C; --tick:#E9E9E2;
-}}
-:root[data-theme="dark"]{
-  --sea:#060C1C; --sea-2:#030711;
-  --cloth:#141B2D; --cloth-2:#1D2539;
-  --ink:#E9E9E2; --flare:#FF6A3D; --sun:#FFD15C;
-  --ink-2:#AEB4C4; --ink-3:#7D8497;
-  --line:#2B3550; --line-soft:#222B42;
-  --flow:#5B9BFF; --flow-2:#84B5FF; --flow-wash:rgba(91,155,255,.14);
-  --load-1:#E8B63F; --load-2:#FF8A45; --load-3:#FF5C43;
-  --sailfill:#1C2437; --sailfill-2:#182034; --jibfill:#212B44;
-  --flare-ink:#FF8A5E;
-  --deep:#27314B; --knock:#EFEFE8;
-  --on-flow:#060C1C; --tick:#E9E9E2;
-}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--sea);color:var(--ink);
@@ -63,7 +38,7 @@ body{margin:0;background:var(--sea);color:var(--ink);
 h1,h2,h3{margin:0}
 h1,h2{font-family:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
   font-weight:800;text-transform:uppercase;line-height:.86;letter-spacing:.005em}
-h1{font-size:clamp(52px,10.5vw,132px)}
+h1{font-size:clamp(44px,8.8vw,108px)}
 h2{font-size:clamp(30px,4.6vw,54px)}
 h3{font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:17px;line-height:1.2}
 .eyebrow{font-family:"Spline Sans Mono",ui-monospace,monospace;font-size:11px;
@@ -71,11 +46,9 @@ h3{font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:17px;line-h
 .mono{font-family:"Spline Sans Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 .prose{font-size:16px;line-height:1.58;color:var(--ink-2);max-width:64ch}
 .prose strong,.prose b{color:var(--ink);font-weight:700}
-.lede{font-size:clamp(16px,1.7vw,19.5px);line-height:1.42;max-width:52ch;margin:18px 0 0;
-  color:var(--knock);opacity:.88}
 
 /* ── masthead: full-bleed colour field ── */
-.masthead{margin:0 calc(-1 * var(--pad)) 0;padding:clamp(26px,5vw,60px) var(--pad) clamp(24px,4vw,44px);
+.masthead{margin:0 calc(-1 * var(--pad)) 0;padding:clamp(26px,5vw,54px) var(--pad) clamp(28px,4vw,42px);
   background:var(--sea);position:relative;overflow:hidden;display:block;border-bottom:6px solid var(--flare)}
 .masthead::after{content:"";position:absolute;right:-8%;top:-30%;width:58%;height:190%;
   background:var(--sea-2);transform:skewX(-14deg);z-index:0}
@@ -100,6 +73,8 @@ h3{font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:17px;line-h
 .windmeta .big{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:26px;
   line-height:1;color:var(--sun)}
 .windmeta .mono{color:var(--knock);opacity:.6}
+/* the scale row is tuned for cloth; on the dark bar it needs the knocked-out ink */
+.windbar .scale{color:var(--knock);opacity:.62}
 
 /* ── panels: cloth blocks on the blue, ground shows through as the gap ── */
 .bay{display:grid;grid-template-columns:1.02fr 1.1fr .98fr;gap:14px;align-items:start}
@@ -302,8 +277,7 @@ tr:last-child td{border-bottom:0}
 <header class="masthead">
   <div>
     <div class="hull"><span class="num">I-14</span><span class="eyebrow">Rig &amp; sail trim model</span></div>
-    <h1 style="margin-top:8px">What every string<br>on the boat is&nbsp;doing</h1>
-    <p class="lede">Pull a control and watch the sail change shape. Set your angle on the dial, then move the breeze and watch the <em>right</em> answer move with it — that migration is the whole lesson.</p>
+    <h1 style="margin-top:8px">What every control<br>on the boat is&nbsp;doing</h1>
   </div>
 </header>
 
@@ -397,7 +371,7 @@ tr:last-child td{border-bottom:0}
 
   <!-- ── controls ── -->
   <section class="card ctrlcard">
-    <div class="card-hd"><span class="eyebrow">The strings</span><span class="rule"></span>
+    <div class="card-hd"><span class="eyebrow">The controls</span><span class="rule"></span>
       <span class="mono" style="font-size:10px;color:var(--load-2)">▼ target</span></div>
     <div class="card-bd" id="ctrls"></div>
   </section>
@@ -420,7 +394,7 @@ tr:last-child td{border-bottom:0}
 <div class="demo">
   <div>
     <span class="eyebrow">The demonstration</span>
-    <p class="cap" id="demo-cap">Set your trim for a nice 10-knot beat, then press <b>Let the breeze build</b> and touch nothing. The wind goes to 22 while every string stays exactly where you left it. Watch the draft slide aft and the boat fall over — that is what you are fighting when you pull tension on.</p>
+    <p class="cap" id="demo-cap">Set your trim for a nice 10-knot beat, then press <b>Let the breeze build</b> and touch nothing. The wind goes to 22 while every control stays exactly where you left it. Watch the draft slide aft and the boat fall over — that is what you are fighting when you pull tension on.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="act" id="btn-build" type="button">Let the breeze build</button>
@@ -431,7 +405,7 @@ tr:last-child td{border-bottom:0}
 <section class="lesson">
   <div class="lesson-hd"><h2>Five things a sail can be</h2><span class="rule"></span>
     <span class="eyebrow">everything below moves one of these</span></div>
-  <p class="prose" style="margin:0 0 16px">Every string on the boat is a way of changing one of five numbers. Learn the five and the controls stop being a list to memorise — they become the tools you reach for once you have decided what the sail should look like.</p>
+  <p class="prose" style="margin:0 0 16px">Every control on the boat is a way of changing one of five numbers. Learn the five and the controls stop being a list to memorise — they become the tools you reach for once you have decided what the sail should look like.</p>
   <div class="grid3">
     <div class="gcell"><span class="tag">DEPTH</span><h3>How fat it is</h3>
       <p>Camber, as a percentage of the chord. Deep sail = big lift coefficient = power, and a lot of side force with it. Flat sail = less drive, but less heel and a wider steering groove. In the model this is the number that decides whether you are powered or pinned.</p></div>
@@ -449,7 +423,7 @@ tr:last-child td{border-bottom:0}
 </section>
 
 <section class="lesson">
-  <div class="lesson-hd"><h2>What each string actually pulls</h2><span class="rule"></span></div>
+  <div class="lesson-hd"><h2>What each control actually pulls</h2><span class="rule"></span></div>
   <div class="tbl-wrap">
   <table>
     <thead><tr><th>Control</th><th>What it physically pulls</th><th>First thing that changes</th><th>Second thing that changes</th><th>Where people get it wrong</th></tr></thead>
@@ -475,7 +449,7 @@ tr:last-child td{border-bottom:0}
     <div class="card"><div class="card-bd">
       <span class="tag mono" style="color:var(--flow);font-size:10.5px">REASON ONE</span>
       <h3 style="margin:6px 0 8px">You are only holding the shape you already had</h3>
-      <p class="prose" style="font-size:15.5px">Aerodynamic pressure goes with the <b>square</b> of wind speed. Going from 10 to 20 knots is not twice the load on your rig — it is four times. Cloth stretches, the leech stretches, the forestay sags, the mast bends further. Leave every string exactly where it was and the sail becomes deeper, with the draft further aft and a leech that has bladed off at the top. So the first tranche of tension is not depowering at all. It is standing still.</p>
+      <p class="prose" style="font-size:15.5px">Aerodynamic pressure goes with the <b>square</b> of wind speed. Going from 10 to 20 knots is not twice the load on your rig — it is four times. Cloth stretches, the leech stretches, the forestay sags, the mast bends further. Leave every control exactly where it was and the sail becomes deeper, with the draft further aft and a leech that has bladed off at the top. So the first tranche of tension is not depowering at all. It is standing still.</p>
     </div></div>
     <div class="card"><div class="card-bd">
       <span class="tag mono" style="color:var(--load-2);font-size:10.5px">REASON TWO</span>
@@ -629,7 +603,7 @@ var CONTROLS=[
   light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
   heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."},
  {k:"kite",name:"Kite sheet",kite:1,lo:"eased · luff folds",hi:"strapped in",
-  blurb:"The string you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
+  blurb:"The control you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
   light:"Ease and ease again. In light air the curl is your only instrument, and the sheet load is so low that you have to work to feel it at all.",
   heavy:"Still on the curl, but you will be playing it hard and constantly. Dumping the kite sheet is the fastest way to stand the boat back up when it loads."},
  {k:"tack",name:"Kite tack line",kite:1,lo:"eased · tack flies high",hi:"on hard · down to the sprit",
@@ -1414,7 +1388,7 @@ function diagnose(m,b,tgt){
   if(!up&&S.vang<.3)d.push([2,"warn","Off the wind the sheet cannot pull down at all. With the vang this soft the top of the main is just twisting away — <b>the vang is your only leech control out here</b>."]);
   if(!up&&S.out>.6&&W<16)d.push([1,"warn","Flat foot downwind. The bottom third is free drive and you have outhauled it away."]);
   if(onTgt&&m.heelRatio>1.3)d.push([1,"good","Trimmed right, and <b>still carrying "+fmt(m.heelRatio*100)+"% of what two on the wire can hold</b>. In this much breeze that is the day, not a mistake — the rest comes off the boat with crew position, steering, and how hard you dump the sheet in the puffs."]);
-  if(onTgt&&m.heelRatio<.55&&W<13)d.push([1,"good","Trimmed right, and still <b>well short of the power you could hold</b>. There is no more to be had from the strings in "+fmt(W)+" knots — the gains left are in staying still, sailing slightly low and fast, and finding pressure."]);
+  if(onTgt&&m.heelRatio<.55&&W<13)d.push([1,"good","Trimmed right, and still <b>well short of the power you could hold</b>. There is no more to be had from the controls in "+fmt(W)+" knots — the gains left are in staying still, sailing slightly low and fast, and finding pressure."]);
   if(!d.length){
     d.push([0,"good",worst<.12?"In the groove. Depth, draft position and twist are all where this breeze wants them — now move the wind slider and watch the target marks walk away from you."
       :"Nothing is actually broken, but you are not on the tuning target either. The orange marks on the sliders show where this breeze wants each control."]);
@@ -1531,7 +1505,7 @@ function render(){
   dot.style.background=col;
   el("v-score").textContent=fmt(score)+" / 100";
   el("v-score").style.color=col;
-  txt.textContent=score>92?"That is the shape":score>78?"Close — one or two strings out":score>60?"Working, but leaving a lot behind":"Wrong shape for this breeze";
+  txt.textContent=score>92?"That is the shape":score>78?"Close — one or two controls out":score>60?"Working, but leaving a lot behind":"Wrong shape for this breeze";
 
   var dl=el("diag");
   dl.innerHTML=diagnose(m,b,tgt).map(function(x){
@@ -1624,7 +1598,7 @@ el("btn-build").addEventListener("click",function(){
     var p=clamp((ts-start)/dur,0,1);
     S.wind=from+(to-from)*p;
     var m=render();
-    el("demo-cap").innerHTML="Wind <b>"+fmt(S.wind,1)+" kts</b> and not one string has moved. Rig load is now <b>"+
+    el("demo-cap").innerHTML="Wind <b>"+fmt(S.wind,1)+" kts</b> and not one control has moved. Rig load is now <b>"+
       (Math.pow(S.wind/w0,2)).toFixed(2)+"×</b> what it was. Draft has walked from "+fmt(d0)+"% to <b>"+fmt(m.draft)+
       "% aft</b>, the leech has gone from "+fmt(t0v,1)+"° to <b>"+fmt(m.twist,1)+"°</b> of twist, and you are holding <b>"+
       fmt(m.heelRatio*100)+"%</b> of what two people on the wire can carry.";

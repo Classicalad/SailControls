@@ -1,13 +1,15 @@
 # Sail Controls — an International 14 trim model
 
-An interactive model of what every string on an i14 actually does to the shape of the
+An interactive model of what every control on an i14 actually does to the shape of the
 sails, and why the right answer changes as the breeze builds.
 
 Visual identity is **Spinnaker**: flat fields of saturated colour, hard seams and
 oversized condensed numerals, after the loudest object in the sport. Racing blue is the
 page ground rather than a neutral, panels are sailcloth blocks with the ground showing
 through as the gaps, and there is not a rounded corner or a hairline border anywhere.
-Big Shoulders Display, Hanken Grotesk and Spline Sans Mono.
+Big Shoulders Display, Hanken Grotesk and Spline Sans Mono. It commits to one palette
+rather than shipping a dark variant, and declares `color-scheme: light` so native
+controls follow.
 
 **[index.html](index.html)** — open it in any browser. Single file, no build
 step, no dependencies. Fonts load from Google Fonts; everything else runs offline.
@@ -66,7 +68,7 @@ all nine marks migrate. That migration is the point of the whole thing.
 ### The demonstration
 
 Set your trim for ten knots, press **Let the breeze build**, and touch nothing. The wind
-ramps to 22 with every string frozen:
+ramps to 22 with every control frozen:
 
 > Draft has walked from 46% to 55% aft, the leech has gone from 8.1° to 16.0° of twist, and
 > you are holding 254% of what two people on the wire can carry.
