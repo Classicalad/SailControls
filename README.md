@@ -3,6 +3,12 @@
 An interactive model of what every string on an i14 actually does to the shape of the
 sails, and why the right answer changes as the breeze builds.
 
+Visual identity is **Spinnaker**: flat fields of saturated colour, hard seams and
+oversized condensed numerals, after the loudest object in the sport. Racing blue is the
+page ground rather than a neutral, panels are sailcloth blocks with the ground showing
+through as the gaps, and there is not a rounded corner or a hairline border anywhere.
+Big Shoulders Display, Hanken Grotesk and Spline Sans Mono.
+
 **[index.html](index.html)** — open it in any browser. Single file, no build
 step, no dependencies. Fonts load from Google Fonts; everything else runs offline.
 
