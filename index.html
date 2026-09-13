@@ -982,16 +982,20 @@ var tileEls={};
    is nearly two thirds of the boat's length again out in front of it. 0.0455 px per
    mm fits all three in the frame. */
 var MMPX=.0455;
-var BOWX=133, DECKY=371, HULLL=4267*MMPX, TRANSOMX=BOWX+HULLL;
+/* BOWX is the foremost point of the boat, and on a 14 that is the DECK, not the
+   waterline: the bow overhangs forward up top and the stem falls away aft and down
+   beneath it. The pole comes out of that overhang. */
+var BOWX=131, DECKY=371, HULLL=4267*MMPX, TRANSOMX=BOWX+HULLL;
 var BASE={x:BOWX+HULLL*.42, y:DECKY};
 var BOW={x:BOWX+5, y:DECKY-15};
 /* The pole lives on the boat whether the kite is up or not. The rules cap it at
    2743mm beyond the bow deployed and 900mm stowed, so both states are drawn to
    the same scale as everything else. It exits at the stem head and rises a little
    going forward. */
-var POLE_EXIT={x:BOWX+3, y:DECKY-18};
-var SPRIT_EXT={x:BOWX-2743*MMPX, y:DECKY-26};
-var SPRIT_RET={x:BOWX-900*MMPX,  y:DECKY-21};
+var POLE_EXIT={x:BOWX+2, y:DECKY-20};
+/* the pole rises going forward, ~7 degrees, so the tack flies clear of the water */
+var SPRIT_EXT={x:BOWX-2743*MMPX, y:DECKY-35};
+var SPRIT_RET={x:BOWX-900*MMPX,  y:DECKY-25};
 function qpt(p0,p1,p2,t){var u=1-t;return{x:u*u*p0.x+2*u*t*p1.x+t*t*p2.x, y:u*u*p0.y+2*u*t*p1.y+t*t*p2.y}}
 function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)}).join(" ")}
 (function(){
@@ -999,20 +1003,20 @@ function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(
      and a transom that stops dead at the waterline */
   /* fine plumb stem, low freeboard, next to no rocker in the run aft */
   el("hull").setAttribute("d",
-    /* the nose: the foredeck rounds over on a tight radius into the stem, and the
-       pole comes out of that curve — the shape the reference shows head-on */
-    "M140 352.5 C134 354.5 131.5 361 132 370 "+
-    /* stem close to plumb, then a cut-away forefoot into the long run */
-    "C132.5 381 147 389.5 178 391 Q256 393 326 388 L327 368 "+
-    /* sheer: low and near-flat aft, lifting late and steeply into a fine entry */
-    "C252 374 188 365 140 352.5 Z");
+    /* deck nose — the furthest-forward point of the boat — then the stem sweeps
+       AFT and down beneath it in a concave curve, so the bow overhangs forward */
+    "M131 351 C131 360 137 376 147 388 "+
+    /* forefoot into the long flat run aft */
+    "Q201 393 258 391 Q303 390 323 388 L325 368 "+
+    /* sheer: low aft, lifting into the bow */
+    "C250 374 180 359 131 351 Z");
   /* the racks, which on a 14 are most of the boat's beam */
   el("racks").setAttribute("d",
-    "M176 359 C232 361 282 362 322 362 M200 360 L200 370 M252 361 L252 372 M302 362 L302 370");
+    "M172 354 C230 358 280 360 318 361 M200 356 L200 367 M250 359 L250 371 M298 361 L298 370");
   /* daggerboard and the T-foil rudder */
-  el("board").setAttribute("d","M219 386 L227 386 L230 427 L224 427 Z");
-  el("rudder").setAttribute("d","M320 384 L326 382 L328 421 L323 421 Z");
-  el("tfoil").setAttribute("d","M312 421 Q324 424 334 420");
+  el("board").setAttribute("d","M217 386 L225 386 L228 427 L222 427 Z");
+  el("rudder").setAttribute("d","M318 384 L324 382 L326 421 L321 421 Z");
+  el("tfoil").setAttribute("d","M310 421 Q322 424 332 420");
   var L=el("rig-labels");
   ["bendlbl","saglbl","riglbl"].forEach(function(id,i){
     var t=mk("text",{id:id,class:"s-lbl",x:0,y:0}); L.appendChild(t);
