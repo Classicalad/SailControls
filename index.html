@@ -3,257 +3,266 @@
 <title>i14 Trim Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap">
 <style>
-/* ── tokens ─────────────────────────────────────────────── */
+/* ══ SPINNAKER ══════════════════════════════════════════════════════════════
+   Flat fields of saturated colour, hard seams, huge numerals. No hairlines,
+   no rounded corners, no neutral grey ground. ═══════════════════════════════ */
 :root{
-  --ground:#E4EAEC; --ground-2:#D7E0E3; --surface:#F7FBFC; --surface-2:#EDF3F5;
-  --ink:#0A1A21; --ink-2:#3B555F; --ink-3:#6D858E;
-  --line:#C2D1D6; --line-soft:#DAE4E7;
-  --flow:#00707E; --flow-2:#0A8A97; --flow-wash:rgba(0,112,126,.10);
-  --load-1:#A8862B; --load-2:#CE7223; --load-3:#B93726;
-  --sailfill:#FFFFFF; --sailfill-2:#F2F7F8; --jibfill:#E8F1F2;
-  --shadow:0 1px 2px rgba(10,26,33,.06), 0 8px 24px -18px rgba(10,26,33,.35);
-  --tick:#0A1A21; --on-flow:#F7FBFC;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --ground:#07131A; --ground-2:#0B1B23; --surface:#0F2129; --surface-2:#152B34;
-    --ink:#DEEAED; --ink-2:#9FB7BE; --ink-3:#6E8A93;
-    --line:#1F3A45; --line-soft:#182F38;
-    --flow:#41C6D6; --flow-2:#6BD8E4; --flow-wash:rgba(65,198,214,.12);
-    --load-1:#D9B44E; --load-2:#F0913F; --load-3:#F2664B;
-    --sailfill:#1B333C; --sailfill-2:#162B33; --jibfill:#1E3A44;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
-    --tick:#DEEAED; --on-flow:#07131A;
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#07131A; --ground-2:#0B1B23; --surface:#0F2129; --surface-2:#152B34;
-  --ink:#DEEAED; --ink-2:#9FB7BE; --ink-3:#6E8A93;
-  --line:#1F3A45; --line-soft:#182F38;
-  --flow:#41C6D6; --flow-2:#6BD8E4; --flow-wash:rgba(65,198,214,.12);
-  --load-1:#D9B44E; --load-2:#F0913F; --load-3:#F2664B;
-  --sailfill:#1B333C; --sailfill-2:#162B33; --jibfill:#1E3A44;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
-  --tick:#DEEAED; --on-flow:#07131A;
+  --sea:#0E2A63; --sea-2:#0A1F4C;
+  --cloth:#F2F1EA; --cloth-2:#E4E2D7;
+  --ink:#0B1020; --flare:#FF4A17; --sun:#FFC42E;
+  --pad:clamp(14px,3vw,34px);
+  color-scheme:light;                   /* one visual world — no dark variant */
+
+  /* names below are the interface to the drawing code — values change, keys don't */
+  --ground:var(--sea); --ground-2:var(--cloth-2);
+  --surface:var(--cloth); --surface-2:var(--cloth-2);
+  --ink-2:#3C4457; --ink-3:#63697C;     /* 4.8:1 on cloth — these carry 10px labels */
+  --line:#C6C3B4; --line-soft:#D9D6C8;
+  --flow:#14418F; --flow-2:#1E5AC0; --flow-wash:rgba(20,65,143,.10);
+  --load-1:#D89A1E; --load-2:#EF6C1F; --load-3:#D42E1A;
+  --sailfill:#FFFFFF; --sailfill-2:#F7F6F0; --jibfill:#E7EAF2;
+  --flare-ink:#B8300A;                  /* the accent as text: bright flare fails on cloth */
+  --deep:#0B1020; --knock:#F2F1EA;      /* dark bars, and the text knocked out of them */
+  --on-flow:#F2F1EA; --tick:#0B1020; --shadow:none;
 }
 
 *{box-sizing:border-box}
-body{
-  margin:0; background:var(--ground); color:var(--ink);
-  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
-  font-size:15px; line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-}
-.wrap{max-width:1260px;margin:0 auto;padding:clamp(14px,2.6vw,30px) clamp(14px,3vw,32px) 72px}
+body{margin:0;background:var(--sea);color:var(--ink);
+  font-family:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;font-size:15.5px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--pad) 90px}
 
-/* ── type ───────────────────────────────────────────────── */
-h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.018em}
-h1{font-size:clamp(29px,4.3vw,44px);font-weight:800;line-height:1.02}
-h2{font-size:clamp(19px,2.2vw,25px);font-weight:700}
-h3{font-size:16px;font-weight:700}
-.eyebrow{
-  font-family:"Archivo Narrow","Archivo Narrow Fallback",sans-serif;
-  font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.15em;
-  color:var(--ink-3);
-}
-.prose{font-family:"Newsreader",Georgia,serif;font-size:16.5px;line-height:1.62;color:var(--ink-2);max-width:66ch}
-.prose strong{color:var(--ink);font-weight:600}
-.prose em{font-style:italic}
-.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
-.lede{font-family:"Newsreader",Georgia,serif;font-size:clamp(16px,1.7vw,19px);line-height:1.5;color:var(--ink-2);max-width:60ch;margin:10px 0 0}
+/* ── type ── */
+h1,h2,h3{margin:0}
+h1,h2{font-family:"Big Shoulders Display","Haettenschweiler","Arial Narrow",sans-serif;
+  font-weight:800;text-transform:uppercase;line-height:.86;letter-spacing:.005em}
+h1{font-size:clamp(44px,8.8vw,108px)}
+h2{font-size:clamp(30px,4.6vw,54px)}
+h3{font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:17px;line-height:1.2}
+.eyebrow{font-family:"Spline Sans Mono",ui-monospace,monospace;font-size:11px;
+  letter-spacing:.02em;color:var(--ink-3);text-transform:none}
+.mono{font-family:"Spline Sans Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.prose{font-size:16px;line-height:1.58;color:var(--ink-2);max-width:64ch}
+.prose strong,.prose b{color:var(--ink);font-weight:700}
 
-/* ── header ─────────────────────────────────────────────── */
-.masthead{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;justify-content:space-between;
-  padding-bottom:18px;border-bottom:1px solid var(--line)}
-.hull{display:flex;align-items:baseline;gap:12px}
-.hull .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;color:var(--flow);
-  border:1px solid var(--flow);padding:2px 7px;letter-spacing:.06em}
+/* ── masthead: full-bleed colour field ── */
+.masthead{margin:0 calc(-1 * var(--pad)) 0;padding:clamp(26px,5vw,54px) var(--pad) clamp(28px,4vw,42px);
+  background:var(--sea);position:relative;overflow:hidden;display:block;border-bottom:6px solid var(--flare)}
+.masthead::after{content:"";position:absolute;right:-8%;top:-30%;width:58%;height:190%;
+  background:var(--sea-2);transform:skewX(-14deg);z-index:0}
+.masthead > *{position:relative;z-index:1}
+.masthead h1{color:var(--knock);text-wrap:balance}
+.hull{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.hull .num{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:26px;line-height:1;
+  background:var(--flare);color:var(--knock);padding:4px 10px 2px;letter-spacing:.04em}
+.hull .eyebrow{color:var(--knock);opacity:.7}
 
-/* ── wind bar ───────────────────────────────────────────── */
-.windbar{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(14px,2.4vw,28px);align-items:center;
-  background:var(--surface);border:1px solid var(--line);border-radius:3px;
-  padding:14px clamp(14px,2vw,20px);margin:18px 0;box-shadow:var(--shadow);
-  position:sticky;top:0;z-index:30}
-/* it keeps its rounded corners while parked, but earns a stronger edge once it is
-   floating over the page rather than sitting in it */
-.windbar.stuck{border-radius:0 0 3px 3px;box-shadow:0 6px 18px -10px rgba(0,0,0,.45)}
-.windbig{display:flex;align-items:baseline;gap:6px}
-.windbig .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:40px;line-height:.95;letter-spacing:-.02em;
-  min-width:98px;text-align:left}
-.windbig .u{font-size:12px;color:var(--ink-3);font-weight:600}
-.windmeta{display:flex;flex-direction:column;gap:3px;text-align:right;width:176px}
-.windmeta .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:17px;color:var(--load-2)}
+/* ── wind bar ── */
+.windbar{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(14px,2.4vw,30px);align-items:center;
+  background:var(--deep);color:var(--knock);padding:12px var(--pad);
+  margin:0 calc(-1 * var(--pad)) 20px;position:sticky;top:0;z-index:30}
+.windbar.stuck{box-shadow:0 8px 0 -4px rgba(0,0,0,.28)}
+.windbig{display:flex;align-items:flex-end;gap:9px}
+.windbig .v{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:58px;line-height:.8;
+  min-width:104px;text-align:left;color:var(--knock)}
+.windbig .u{font-family:"Spline Sans Mono",monospace;font-size:10px;line-height:1.25;color:var(--knock);opacity:.6;padding-bottom:3px}
+.windbar .eyebrow{color:var(--knock);opacity:.65}
+.windmeta{display:flex;flex-direction:column;gap:2px;text-align:right;width:186px}
+.windmeta .big{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:26px;
+  line-height:1;color:var(--sun)}
+.windmeta .mono{color:var(--knock);opacity:.6}
+/* the scale row is tuned for cloth; on the dark bar it needs the knocked-out ink */
+.windbar .scale{color:var(--knock);opacity:.62}
 
-/* ── modes ──────────────────────────────────────────────── */
-.dialwrap{margin:-2px 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line-soft)}
-#compass{display:block;width:100%;max-width:260px;margin:0 auto;cursor:pointer;touch-action:none}
-#compass:focus-visible{outline:2px solid var(--flow);outline-offset:3px;border-radius:6px}
-.diallegend{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:center;margin:6px 0 0;
-  font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
-.diallegend span{display:inline-flex;align-items:center;gap:5px}
-.sw{width:9px;height:9px;border-radius:2px;display:inline-block}
-.sw-nogo{border:1px solid var(--line);
-  background:repeating-linear-gradient(45deg,var(--ground-2) 0 2px,var(--ink-3) 2px 3px)}
-.sw-kite{background:var(--flow);opacity:.55}
-#dial-hint{text-transform:none;letter-spacing:0;color:var(--flow)}
-
-/* ── layout ─────────────────────────────────────────────── */
-.bay{display:grid;grid-template-columns:1.02fr 1.12fr .96fr;gap:14px;align-items:start}
+/* ── panels: cloth blocks on the blue, ground shows through as the gap ── */
+.bay{display:grid;grid-template-columns:1.02fr 1.1fr .98fr;gap:14px;align-items:start}
 @media(max-width:1080px){.bay{grid-template-columns:1fr 1fr}.bay .ctrlcard{grid-column:1/-1}}
-/* the control bank is far taller than the drawings; pin the drawings so you can see
-   what a string is doing while you are reaching for it */
-@media(min-width:1081px){
-  .bay > .card:not(.ctrlcard){position:sticky;top:var(--windbar-h,104px)}
-}
-@media(min-width:721px) and (max-width:1080px){
-  .ctrlcard .card-bd{max-height:56vh;overflow-y:auto;overscroll-behavior:contain}
-}
 @media(max-width:720px){.bay{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:3px;box-shadow:var(--shadow)}
-.card-hd{display:flex;align-items:center;gap:10px;padding:11px 14px 9px;border-bottom:1px solid var(--line-soft)}
-.card-hd .rule{flex:1;height:1px;background:var(--line-soft)}
-.card-bd{padding:12px 14px 14px}
+@media(min-width:1081px){.bay > .card:not(.ctrlcard){position:sticky;top:var(--windbar-h,96px)}}
+@media(min-width:721px) and (max-width:1080px){
+  .ctrlcard .card-bd{max-height:56vh;overflow-y:auto;overscroll-behavior:contain}}
+.card{background:var(--cloth);border:0;border-radius:0}
+.card-hd{display:flex;align-items:center;gap:10px;background:var(--deep);padding:7px 13px 6px}
+.card-hd .eyebrow{color:var(--knock);font-size:11.5px;letter-spacing:.04em}
+.card-hd .rule{display:none}
+.card-hd .mono{color:var(--sun)}
+.card-bd{padding:14px 13px 16px}
 .card svg{display:block;width:100%;height:auto;overflow:visible}
 #rig-body{transition:transform .45s cubic-bezier(.4,0,.2,1)}
 
-/* ── controls ───────────────────────────────────────────── */
-.ctrl{padding:9px 0 11px;border-bottom:1px dashed var(--line-soft)}
+/* ── compass ── */
+.dialwrap{margin:-2px 0 14px;padding-bottom:14px;border-bottom:3px solid var(--ink)}
+#compass{display:block;width:100%;max-width:266px;margin:0 auto;cursor:pointer;touch-action:none}
+#compass:focus-visible{outline:3px solid var(--flare);outline-offset:3px}
+.diallegend{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:center;margin:8px 0 0;
+  font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-3)}
+.diallegend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:10px;height:10px;display:inline-block}
+.sw-nogo{background:repeating-linear-gradient(45deg,var(--cloth-2) 0 2px,var(--ink-3) 2px 3px);outline:1px solid var(--line)}
+.sw-kite{background:var(--flow)}
+#dial-hint{color:var(--flare-ink)}
+
+/* ── controls ── */
+.ctrl{padding:10px 0 12px;border-bottom:1px solid var(--line-soft)}
 .ctrl:last-of-type{border-bottom:0}
-.ctrl-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px}
-.ctrl-name{font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:12.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left}
-.ctrl-name:hover{color:var(--flow)}
-.ctrl.sel .ctrl-name{color:var(--flow)}
-.ctrl-val{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;color:var(--ink-3)}
-.ctrl-val .d{margin-left:7px;font-weight:600}
-.ctrl-val .d.hi{color:var(--load-2)} .ctrl-val .d.ok{color:var(--flow)}
-.grp{display:flex;align-items:center;gap:9px;margin:16px 0 2px;padding-top:12px;border-top:1px solid var(--line)}
-.grp .rule{flex:1;height:1px;background:var(--line-soft)}
-.grp .grp-note{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--flow);white-space:nowrap}
+.ctrl-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.ctrl-name{font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:14px;letter-spacing:0;
+  color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.ctrl-name:hover{color:var(--flare-ink)}
+.ctrl.sel .ctrl-name{color:var(--flare-ink)}
+.ctrl.sel .ctrl-name::before{content:"▸ ";color:var(--flare-ink)}
+.ctrl-val{font-family:"Spline Sans Mono",monospace;font-size:11.5px;color:var(--ink-3)}
+.ctrl-val .d{margin-left:8px;font-weight:600}
+.ctrl-val .d.hi{color:var(--flare-ink)} .ctrl-val .d.ok{color:var(--flow)}
+.grp{display:flex;align-items:center;gap:9px;margin:18px 0 2px;padding-top:13px;border-top:3px solid var(--ink)}
+.grp .rule{flex:1}
+.grp .eyebrow{font-weight:700;color:var(--ink)}
+.grp .grp-note{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--flare-ink);white-space:nowrap}
 .grp.off .grp-note{color:var(--ink-3)}
-.ctrl.off{opacity:.42}
+.ctrl.off{opacity:.4}
 .ctrl.off .ctrl-name{cursor:default}
-.ctrl.off input[type=range]{cursor:not-allowed}
 .slot{position:relative;height:22px;display:flex;align-items:center}
-.slot .target{position:absolute;top:1px;bottom:1px;width:2px;background:var(--load-2);opacity:.85;
-  left:calc(9px + var(--t) * (100% - 18px));transform:translateX(-1px);transition:left .5s cubic-bezier(.4,0,.2,1);pointer-events:none;z-index:2}
-.slot .target::after{content:"";position:absolute;top:-4px;left:-3px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--load-2)}
-.scale{display:flex;justify-content:space-between;font-family:"Archivo Narrow",sans-serif;font-size:10px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+.slot .target{position:absolute;top:0;bottom:0;width:0;
+  left:calc(9px + var(--t) * (100% - 18px));pointer-events:none;z-index:2;
+  transition:left .5s cubic-bezier(.4,0,.2,1)}
+.slot .target::after{content:"";position:absolute;top:-1px;left:-5px;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--flare)}
+.scale{display:flex;justify-content:space-between;font-family:"Spline Sans Mono",monospace;
+  font-size:9.5px;color:var(--ink-3);margin-top:3px}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:transparent;margin:0;height:22px;cursor:pointer}
-input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;
-  background:linear-gradient(90deg,var(--flow) 0 calc(var(--p)*100%),var(--ground-2) calc(var(--p)*100%) 100%);border:1px solid var(--line)}
-input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--ground-2);border:1px solid var(--line)}
-input[type=range]::-moz-range-progress{height:6px;border-radius:3px 0 0 3px;background:var(--flow)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;
-  background:var(--surface);border:2px solid var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28)}
-input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28)}
-input[type=range]:focus-visible{outline:2px solid var(--flow);outline-offset:3px;border-radius:3px}
-.wind-range::-webkit-slider-runnable-track{height:8px;
-  background:linear-gradient(90deg,var(--flow) 0%,var(--load-1) 46%,var(--load-2) 70%,var(--load-3) 100%)}
-.wind-range::-moz-range-track{height:8px;background:linear-gradient(90deg,var(--flow),var(--load-1) 46%,var(--load-2) 70%,var(--load-3))}
-.wind-range::-moz-range-progress{background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:9px;border-radius:0;
+  background:linear-gradient(90deg,var(--flow) 0 calc(var(--p,0)*100%),var(--cloth-2) calc(var(--p,0)*100%) 100%)}
+input[type=range]::-moz-range-track{height:9px;border-radius:0;background:var(--cloth-2)}
+input[type=range]::-moz-range-progress{height:9px;background:var(--flow)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:20px;margin-top:-5.5px;
+  border-radius:0;background:var(--ink);border:0}
+input[type=range]::-moz-range-thumb{width:10px;height:20px;border-radius:0;background:var(--ink);border:0}
+input[type=range]:focus-visible{outline:3px solid var(--flare);outline-offset:3px}
+input.wind-range::-webkit-slider-runnable-track{height:10px;
+  background:linear-gradient(90deg,var(--flow) 0%,var(--sun) 48%,var(--flare) 78%,var(--load-3) 100%)}
+input.wind-range::-moz-range-track{height:10px;background:linear-gradient(90deg,var(--flow),var(--sun) 48%,var(--flare) 78%,var(--load-3))}
+input.wind-range::-moz-range-progress{background:transparent}
+input.wind-range::-webkit-slider-thumb{background:var(--knock);height:22px;margin-top:-6px}
+input.wind-range::-moz-range-thumb{background:var(--knock);height:22px}
 
-.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-button.act{font-family:"Archivo Narrow",sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;
-  padding:9px 13px;border:1px solid var(--ink);background:var(--ink);color:var(--ground);border-radius:2px;cursor:pointer}
-button.act.ghost{background:transparent;color:var(--ink-2);border-color:var(--line)}
-button.act:hover{background:var(--flow);border-color:var(--flow);color:var(--on-flow)}
-button.act:focus-visible{outline:2px solid var(--flow);outline-offset:2px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+button.act{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:17px;
+  letter-spacing:.03em;text-transform:uppercase;padding:8px 15px 6px;border:0;border-radius:0;
+  background:var(--deep);color:var(--knock);cursor:pointer;line-height:1}
+button.act.ghost{background:var(--cloth-2);color:var(--ink)}
+button.act:hover{background:var(--flare);color:var(--knock)}
+button.act:focus-visible{outline:3px solid var(--flare);outline-offset:2px}
 
-/* ── readout strip ──────────────────────────────────────── */
-.strip{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
-  border:1px solid var(--line);border-radius:3px;margin-top:14px;overflow:hidden}
+/* ── readouts ── */
+.strip{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;margin-top:14px}
 @media(min-width:660px){.strip{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:1060px){.strip{grid-template-columns:repeat(8,1fr)}}
-.tile{background:var(--surface);padding:11px 13px 12px;display:flex;flex-direction:column;gap:5px}
-.tile .k{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.tile .v{font-family:"IBM Plex Mono",monospace;font-size:21px;font-weight:600;line-height:1;letter-spacing:-.01em}
-.tile .n{font-size:11.5px;color:var(--ink-3);line-height:1.3;min-height:2.6em}
-.bar{height:5px;background:var(--ground-2);border-radius:3px;overflow:hidden;position:relative}
-.bar i{display:block;height:100%;background:var(--flow);border-radius:3px;transition:width .35s ease,background .35s ease}
-.bar .limit{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink-2);opacity:.75}
+.tile{background:var(--cloth);padding:10px 12px 13px;display:flex;flex-direction:column;gap:5px;
+  border-top:4px solid var(--ink)}
+.tile .k{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--ink-3)}
+.tile .v{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:34px;line-height:.82;
+  color:var(--ink);font-variant-numeric:tabular-nums}
+.tile .n{font-size:11.5px;color:var(--ink-2);line-height:1.32;min-height:2.6em}
+.bar{height:6px;background:var(--cloth-2);position:relative}
+.bar i{display:block;height:100%;background:var(--flow);transition:width .35s ease,background .35s ease}
+.bar .limit{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
 
-/* ── coach ──────────────────────────────────────────────── */
+/* ── coach ── */
 .coach{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:14px}
 @media(max-width:860px){.coach{grid-template-columns:1fr}}
-.verdict{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line-soft);background:var(--surface-2)}
-.verdict .dot{width:9px;height:9px;border-radius:50%;background:var(--flow);flex:none}
-.verdict .txt{font-family:"Archivo",sans-serif;font-weight:700;font-size:15px}
-.verdict .sc{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px}
-.diag{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.diag li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 14px;border-bottom:1px dashed var(--line-soft);
-  font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.verdict{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--deep);color:var(--knock)}
+.verdict .dot{width:14px;height:14px;background:var(--flow);flex:none}
+.verdict .txt{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:24px;line-height:1;
+  text-transform:uppercase}
+.verdict .sc{margin-left:auto;font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:24px;line-height:1}
+.diag{list-style:none;margin:0;padding:0}
+.diag li{display:grid;grid-template-columns:auto 1fr;gap:11px;padding:11px 13px;
+  border-bottom:1px solid var(--line-soft);font-size:15.5px;line-height:1.46;color:var(--ink-2)}
 .diag li:last-child{border-bottom:0}
-.diag .sig{font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.05em;
-  padding:2px 6px;border-radius:2px;height:fit-content;margin-top:2px;white-space:nowrap}
-.sig.warn{background:rgba(206,114,35,.16);color:var(--load-2)}
-.sig.crit{background:rgba(185,55,38,.15);color:var(--load-3)}
-.sig.good{background:var(--flow-wash);color:var(--flow)}
-.diag b{color:var(--ink);font-weight:600}
-.dossier .card-bd p{margin:0 0 10px}
-.dossier dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 12px;align-items:baseline}
-.dossier dt{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
-.dossier dd{margin:0;font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.45;color:var(--ink-2)}
-.dossier dd b{color:var(--ink);font-weight:600}
+/* signal flags rather than pills */
+.diag .sig{font-family:"Spline Sans Mono",monospace;font-size:9.5px;font-weight:600;
+  width:30px;height:30px;display:grid;place-items:center;color:var(--knock);margin-top:1px}
+.sig.warn{background:var(--sun);color:var(--deep)}
+.sig.crit{background:var(--flare)}
+.sig.good{background:var(--flow);color:var(--on-flow)}
+.diag b{color:var(--ink);font-weight:700}
+.dossier dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 13px;align-items:baseline}
+.dossier dt{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--flare-ink);white-space:nowrap}
+.dossier dd{margin:0;font-size:15px;line-height:1.45;color:var(--ink-2)}
+.dossier dd b{color:var(--ink);font-weight:700}
 
-/* ── demo band ──────────────────────────────────────────── */
-.demo{margin-top:14px;border:1px solid var(--line);border-radius:3px;background:var(--surface);
-  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;padding:16px clamp(14px,2vw,20px)}
+/* ── demo band ── */
+.demo{margin-top:14px;background:var(--deep);color:var(--knock);
+  display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:18px var(--pad)}
+.demo{margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad))}
 @media(max-width:720px){.demo{grid-template-columns:1fr}}
-.demo .cap{font-family:"Newsreader",Georgia,serif;font-size:16px;color:var(--ink-2);min-height:3em;max-width:62ch}
-.demo .cap b{color:var(--ink);font-weight:600}
+.demo .eyebrow{color:var(--sun)}
+.demo .cap{font-size:16px;line-height:1.5;min-height:3em;max-width:62ch;margin:6px 0 0;color:var(--knock);opacity:.9}
+.demo .cap b{opacity:1;font-weight:700;color:var(--sun)}
+.demo button.act{background:var(--flare);color:var(--knock)}
+.demo button.act.ghost{background:transparent;color:var(--knock);box-shadow:inset 0 0 0 3px var(--knock)}
+.demo button.act:hover{background:var(--knock);color:var(--deep);box-shadow:none}
 
-/* ── lessons ────────────────────────────────────────────── */
-.lesson{margin-top:56px}
-.lesson-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
-.lesson-hd .rule{flex:1;height:1px;background:var(--line)}
-.grid3{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+/* ── lessons ── */
+.lesson{margin-top:64px}
+.lesson-hd{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;
+  padding-bottom:10px;border-bottom:6px solid var(--flare)}
+.lesson-hd h2{color:var(--knock)}
+.lesson-hd .rule{flex:1}
+.lesson-hd .eyebrow{color:var(--knock);opacity:.7;white-space:nowrap}
+.lesson > .prose{color:var(--knock);opacity:.88;max-width:60ch}
+.grid3{display:grid;grid-template-columns:1fr;gap:3px}
 @media(min-width:620px){.grid3{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:980px){.grid3{grid-template-columns:repeat(3,1fr)}}
-.gcell{background:var(--surface);padding:15px 16px 17px;display:flex;flex-direction:column;gap:7px}
-.gcell h3{font-size:15px}
-.gcell p{margin:0;font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.5;color:var(--ink-2)}
-.gcell .tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--flow);letter-spacing:.04em}
-.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;min-width:640px}
-th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
-th{font-family:"Archivo Narrow",sans-serif;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
-  background:var(--surface-2);position:sticky;top:0}
-td{font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.45;color:var(--ink-2)}
-td:first-child{font-family:"Archivo",sans-serif;font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.gcell{background:var(--cloth);padding:16px 17px 19px;display:flex;flex-direction:column;gap:8px;
+  border-top:4px solid var(--ink)}
+.gcell p{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.gcell .tag{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--flare-ink)}
+.tbl-wrap{overflow-x:auto;background:var(--cloth)}
+table{border-collapse:collapse;width:100%;min-width:660px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:"Spline Sans Mono",monospace;font-size:10px;color:var(--knock);
+  background:var(--deep);position:sticky;top:0;font-weight:500}
+td{font-size:14.5px;line-height:1.45;color:var(--ink-2)}
+td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
 tr:last-child td{border-bottom:0}
-.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.ladder ol{margin:10px 0 0;padding-left:0;list-style:none;counter-reset:s}
-.ladder li{counter-increment:s;position:relative;padding:8px 0 8px 32px;border-bottom:1px dashed var(--line-soft);
-  font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.45;color:var(--ink-2)}
+.ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.ladder .card-bd{padding:17px 18px 19px}
+.ladder ol{margin:12px 0 0;padding-left:0;list-style:none;counter-reset:s}
+.ladder li{counter-increment:s;position:relative;padding:9px 0 9px 40px;
+  border-bottom:1px solid var(--line-soft);font-size:15.5px;line-height:1.45;color:var(--ink-2)}
 .ladder li:last-child{border-bottom:0}
-.ladder li::before{content:counter(s);font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:var(--flow);
-  border:1px solid var(--line);width:20px;height:20px;display:grid;place-items:center;border-radius:2px;
-  position:absolute;left:0;top:10px}
-.ladder li b{color:var(--ink);font-weight:600}
-.note{margin-top:22px;border:1px solid var(--line);border-left:3px solid var(--load-2);border-radius:3px;
-  background:var(--surface);padding:14px 16px}
-.note p{margin:6px 0 0;font-family:"Newsreader",Georgia,serif;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:70ch}
-.twocol{display:grid;grid-template-columns:1fr;gap:22px}
+.ladder li::before{content:counter(s);font-family:"Big Shoulders Display",sans-serif;font-weight:800;
+  font-size:26px;line-height:1;color:var(--flare-ink);position:absolute;left:0;top:8px}
+.ladder li b{color:var(--ink);font-weight:700}
+.ladder .eyebrow{font-weight:700;font-size:11px}
+.note{margin-top:22px;background:var(--sun);color:var(--deep);padding:16px 18px}
+.note .eyebrow{color:var(--deep);font-weight:600;opacity:.75}
+.note p{margin:7px 0 0;font-size:15.5px;line-height:1.52;max-width:70ch;color:var(--deep)}
+.note p b{font-weight:700}
+.twocol{display:grid;grid-template-columns:1fr;gap:20px}
 @media(min-width:780px){.twocol{grid-template-columns:1fr 1fr}}
+.twocol .prose{color:var(--knock);opacity:.88}
+.twocol .prose b{color:var(--sun);opacity:1}
+.foot{margin-top:52px;padding-top:18px;border-top:3px solid rgba(242,241,234,.25);
+  color:var(--knock);opacity:.6;font-size:12.5px;max-width:74ch}
+
 @media(max-width:560px){
   .windbar{grid-template-columns:1fr;gap:12px}
   .windmeta{text-align:left;width:auto}
-  .windbig .v{font-size:34px}
+  .windbig .v{font-size:44px;min-width:80px}
 }
-.foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12.5px;max-width:74ch}
 
-/* ── svg semantics ──────────────────────────────────────── */
+/* ── svg semantics ── */
 .s-line{stroke:var(--line);fill:none}
 .s-ink{stroke:var(--ink);fill:none}
 .s-dim{stroke:var(--ink-3);fill:none}
 .s-flow{stroke:var(--flow);fill:none}
-.s-lbl{fill:var(--ink-3);font-family:"IBM Plex Mono",monospace;font-size:9px}
-.s-lbl2{fill:var(--ink-2);font-family:"Archivo Narrow",sans-serif;font-size:10px;letter-spacing:.09em;text-transform:uppercase}
-.sailA{fill:var(--sailfill);stroke:var(--ink);stroke-width:1.4}
+.s-lbl{fill:var(--ink-3);font-family:"Spline Sans Mono",monospace;font-size:9px}
+.s-lbl2{fill:var(--ink-2);font-family:"Spline Sans Mono",monospace;font-size:9.5px}
+.sailA{fill:var(--sailfill);stroke:var(--ink);stroke-width:1.6}
 .sailB{fill:var(--jibfill);stroke:var(--ink-2);stroke-width:1.2}
 .streak{stroke:var(--flow);stroke-width:1.1;fill:none;stroke-dasharray:5 7;opacity:.55}
 @media (prefers-reduced-motion:no-preference){
@@ -268,8 +277,7 @@ tr:last-child td{border-bottom:0}
 <header class="masthead">
   <div>
     <div class="hull"><span class="num">I-14</span><span class="eyebrow">Rig &amp; sail trim model</span></div>
-    <h1 style="margin-top:8px">What every string<br>on the boat is&nbsp;doing</h1>
-    <p class="lede">Pull a control and watch the sail change shape. Set your angle on the dial, then move the breeze and watch the <em>right</em> answer move with it — that migration is the whole lesson.</p>
+    <h1 style="margin-top:8px">What every control<br>on the boat is&nbsp;doing</h1>
   </div>
 </header>
 
@@ -293,7 +301,7 @@ tr:last-child td{border-bottom:0}
 
   <!-- ── rig elevation ── -->
   <section class="card">
-    <div class="card-hd"><span class="eyebrow">01 · The rig, from the side</span><span class="rule"></span></div>
+    <div class="card-hd"><span class="eyebrow">The rig, from the side</span><span class="rule"></span></div>
     <div class="card-bd">
       <svg id="rig" viewBox="0 0 336 430" role="img" aria-labelledby="rig-t">
         <title id="rig-t">Side elevation of the rig showing mast bend, forestay sag, boom angle and sail depth</title>
@@ -339,7 +347,7 @@ tr:last-child td{border-bottom:0}
 
   <!-- ── sections ── -->
   <section class="card">
-    <div class="card-hd"><span class="eyebrow">02 · Slices, seen from above</span><span class="rule"></span></div>
+    <div class="card-hd"><span class="eyebrow">Slices, seen from above</span><span class="rule"></span></div>
     <div class="card-bd">
       <div class="dialwrap">
         <svg id="compass" viewBox="0 0 224 212" tabindex="0" role="slider"
@@ -363,7 +371,7 @@ tr:last-child td{border-bottom:0}
 
   <!-- ── controls ── -->
   <section class="card ctrlcard">
-    <div class="card-hd"><span class="eyebrow">03 · The strings</span><span class="rule"></span>
+    <div class="card-hd"><span class="eyebrow">The controls</span><span class="rule"></span>
       <span class="mono" style="font-size:10px;color:var(--load-2)">▼ target</span></div>
     <div class="card-bd" id="ctrls"></div>
   </section>
@@ -378,7 +386,7 @@ tr:last-child td{border-bottom:0}
     <ul class="diag" id="diag"></ul>
   </section>
   <section class="card dossier">
-    <div class="card-hd"><span class="eyebrow" id="dos-eyebrow">04 · Control notes</span><span class="rule"></span></div>
+    <div class="card-hd"><span class="eyebrow" id="dos-eyebrow">Control notes</span><span class="rule"></span></div>
     <div class="card-bd" id="dossier"></div>
   </section>
 </div>
@@ -386,7 +394,7 @@ tr:last-child td{border-bottom:0}
 <div class="demo">
   <div>
     <span class="eyebrow">The demonstration</span>
-    <p class="cap" id="demo-cap">Set your trim for a nice 10-knot beat, then press <b>Let the breeze build</b> and touch nothing. The wind goes to 22 while every string stays exactly where you left it. Watch the draft slide aft and the boat fall over — that is what you are fighting when you pull tension on.</p>
+    <p class="cap" id="demo-cap">Set your trim for a nice 10-knot beat, then press <b>Let the breeze build</b> and touch nothing. The wind goes to 22 while every control stays exactly where you left it. Watch the draft slide aft and the boat fall over — that is what you are fighting when you pull tension on.</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="act" id="btn-build" type="button">Let the breeze build</button>
@@ -397,7 +405,7 @@ tr:last-child td{border-bottom:0}
 <section class="lesson">
   <div class="lesson-hd"><h2>Five things a sail can be</h2><span class="rule"></span>
     <span class="eyebrow">everything below moves one of these</span></div>
-  <p class="prose" style="margin:0 0 16px">Every string on the boat is a way of changing one of five numbers. Learn the five and the controls stop being a list to memorise — they become the tools you reach for once you have decided what the sail should look like.</p>
+  <p class="prose" style="margin:0 0 16px">Every control on the boat is a way of changing one of five numbers. Learn the five and the controls stop being a list to memorise — they become the tools you reach for once you have decided what the sail should look like.</p>
   <div class="grid3">
     <div class="gcell"><span class="tag">DEPTH</span><h3>How fat it is</h3>
       <p>Camber, as a percentage of the chord. Deep sail = big lift coefficient = power, and a lot of side force with it. Flat sail = less drive, but less heel and a wider steering groove. In the model this is the number that decides whether you are powered or pinned.</p></div>
@@ -415,7 +423,7 @@ tr:last-child td{border-bottom:0}
 </section>
 
 <section class="lesson">
-  <div class="lesson-hd"><h2>What each string actually pulls</h2><span class="rule"></span></div>
+  <div class="lesson-hd"><h2>What each control actually pulls</h2><span class="rule"></span></div>
   <div class="tbl-wrap">
   <table>
     <thead><tr><th>Control</th><th>What it physically pulls</th><th>First thing that changes</th><th>Second thing that changes</th><th>Where people get it wrong</th></tr></thead>
@@ -441,7 +449,7 @@ tr:last-child td{border-bottom:0}
     <div class="card"><div class="card-bd">
       <span class="tag mono" style="color:var(--flow);font-size:10.5px">REASON ONE</span>
       <h3 style="margin:6px 0 8px">You are only holding the shape you already had</h3>
-      <p class="prose" style="font-size:15.5px">Aerodynamic pressure goes with the <b>square</b> of wind speed. Going from 10 to 20 knots is not twice the load on your rig — it is four times. Cloth stretches, the leech stretches, the forestay sags, the mast bends further. Leave every string exactly where it was and the sail becomes deeper, with the draft further aft and a leech that has bladed off at the top. So the first tranche of tension is not depowering at all. It is standing still.</p>
+      <p class="prose" style="font-size:15.5px">Aerodynamic pressure goes with the <b>square</b> of wind speed. Going from 10 to 20 knots is not twice the load on your rig — it is four times. Cloth stretches, the leech stretches, the forestay sags, the mast bends further. Leave every control exactly where it was and the sail becomes deeper, with the draft further aft and a leech that has bladed off at the top. So the first tranche of tension is not depowering at all. It is standing still.</p>
     </div></div>
     <div class="card"><div class="card-bd">
       <span class="tag mono" style="color:var(--load-2);font-size:10.5px">REASON TWO</span>
@@ -595,7 +603,7 @@ var CONTROLS=[
   light:"Short, rig standing up. Maximum sail area working and the centre of effort high, where the wind is strongest.",
   heavy:"Longer, rig raked aft. Lowers the centre of effort and shortens the heeling lever. Take some board with it, or you sail the beat with the rudder cocked."},
  {k:"kite",name:"Kite sheet",kite:1,lo:"eased · luff folds",hi:"strapped in",
-  blurb:"The string you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
+  blurb:"The control you never stop moving. A spinnaker is flown <b>on the edge of collapse</b>: ease until the luff just curls, then take back the smallest amount that stops it. Trimmed there it is making the most drive it can. Strapped in, it stops being a wing and becomes a wall — plenty of heel, very little forward.",
   light:"Ease and ease again. In light air the curl is your only instrument, and the sheet load is so low that you have to work to feel it at all.",
   heavy:"Still on the curl, but you will be playing it hard and constantly. Dumping the kite sheet is the fastest way to stand the boat back up when it loads."},
  {k:"tack",name:"Kite tack line",kite:1,lo:"eased · tack flies high",hi:"on hard · down to the sprit",
@@ -1380,7 +1388,7 @@ function diagnose(m,b,tgt){
   if(!up&&S.vang<.3)d.push([2,"warn","Off the wind the sheet cannot pull down at all. With the vang this soft the top of the main is just twisting away — <b>the vang is your only leech control out here</b>."]);
   if(!up&&S.out>.6&&W<16)d.push([1,"warn","Flat foot downwind. The bottom third is free drive and you have outhauled it away."]);
   if(onTgt&&m.heelRatio>1.3)d.push([1,"good","Trimmed right, and <b>still carrying "+fmt(m.heelRatio*100)+"% of what two on the wire can hold</b>. In this much breeze that is the day, not a mistake — the rest comes off the boat with crew position, steering, and how hard you dump the sheet in the puffs."]);
-  if(onTgt&&m.heelRatio<.55&&W<13)d.push([1,"good","Trimmed right, and still <b>well short of the power you could hold</b>. There is no more to be had from the strings in "+fmt(W)+" knots — the gains left are in staying still, sailing slightly low and fast, and finding pressure."]);
+  if(onTgt&&m.heelRatio<.55&&W<13)d.push([1,"good","Trimmed right, and still <b>well short of the power you could hold</b>. There is no more to be had from the controls in "+fmt(W)+" knots — the gains left are in staying still, sailing slightly low and fast, and finding pressure."]);
   if(!d.length){
     d.push([0,"good",worst<.12?"In the groove. Depth, draft position and twist are all where this breeze wants them — now move the wind slider and watch the target marks walk away from you."
       :"Nothing is actually broken, but you are not on the tuning target either. The orange marks on the sliders show where this breeze wants each control."]);
@@ -1410,7 +1418,7 @@ function nowLine(k,m,tgt){
 }
 function renderDossier(m,tgt){
   var c=CONTROLS.filter(function(x){return x.k===selected})[0];
-  el("dos-eyebrow").innerHTML="04 · "+c.name;
+  el("dos-eyebrow").innerHTML=c.name;
   el("dossier").innerHTML='<p class="prose" style="font-size:15.5px;margin:0 0 12px">'+c.blurb+'</p>'+
     '<dl><dt>Right now</dt><dd>'+nowLine(c.k,m,tgt)+'</dd>'+
     '<dt>Light air</dt><dd>'+c.light+'</dd>'+
@@ -1497,7 +1505,7 @@ function render(){
   dot.style.background=col;
   el("v-score").textContent=fmt(score)+" / 100";
   el("v-score").style.color=col;
-  txt.textContent=score>92?"That is the shape":score>78?"Close — one or two strings out":score>60?"Working, but leaving a lot behind":"Wrong shape for this breeze";
+  txt.textContent=score>92?"That is the shape":score>78?"Close — one or two controls out":score>60?"Working, but leaving a lot behind":"Wrong shape for this breeze";
 
   var dl=el("diag");
   dl.innerHTML=diagnose(m,b,tgt).map(function(x){
@@ -1590,7 +1598,7 @@ el("btn-build").addEventListener("click",function(){
     var p=clamp((ts-start)/dur,0,1);
     S.wind=from+(to-from)*p;
     var m=render();
-    el("demo-cap").innerHTML="Wind <b>"+fmt(S.wind,1)+" kts</b> and not one string has moved. Rig load is now <b>"+
+    el("demo-cap").innerHTML="Wind <b>"+fmt(S.wind,1)+" kts</b> and not one control has moved. Rig load is now <b>"+
       (Math.pow(S.wind/w0,2)).toFixed(2)+"×</b> what it was. Draft has walked from "+fmt(d0)+"% to <b>"+fmt(m.draft)+
       "% aft</b>, the leech has gone from "+fmt(t0v,1)+"° to <b>"+fmt(m.twist,1)+"°</b> of twist, and you are holding <b>"+
       fmt(m.heelRatio*100)+"%</b> of what two people on the wire can carry.";
