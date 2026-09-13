@@ -51,7 +51,9 @@ adjust three wires and those two things are what you are left with.
 
 The side elevation is drawn to class-rule scale — hull 4267 mm, rig 7626 mm above the
 gunwale, spinnaker boom reaching 2743 mm beyond the bow, all at 0.0455 px/mm — which is
-why the pole looks as long as it does. It is meant to.
+why the pole looks as long as it does. It is meant to. The pole is drawn whether the
+kite is up or not: 2729 mm out when it is flying, 885 mm stowed, against rule limits of
+2743 and 900.
 
 Two views: the rig in side elevation (i14 hull with racks, daggerboard and T-foil rudder,
 mast bend against a straight reference, forestay sag, standing rigging, boom angle, luff

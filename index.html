@@ -311,7 +311,7 @@ tr:last-child td{border-bottom:0}
           <path id="board" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
           <path id="rudder" fill="var(--surface-2)" stroke="var(--ink-3)" stroke-width="1"/>
           <path id="tfoil" fill="none" stroke="var(--ink-3)" stroke-width="2.2" stroke-linecap="round"/>
-          <path id="hull" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.2"/>
+          <path id="hull" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="1.7"/>
           <path id="racks" fill="none" stroke="var(--ink-3)" stroke-width="1" opacity=".6"/>
         </g>
         <path id="sprit" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
@@ -984,8 +984,14 @@ var tileEls={};
 var MMPX=.0455;
 var BOWX=133, DECKY=371, HULLL=4267*MMPX, TRANSOMX=BOWX+HULLL;
 var BASE={x:BOWX+HULLL*.42, y:DECKY};
-var BOW={x:BOWX+3, y:DECKY-7};
-var SPRIT={x:BOWX-2743*MMPX, y:DECKY-13};
+var BOW={x:BOWX+5, y:DECKY-15};
+/* The pole lives on the boat whether the kite is up or not. The rules cap it at
+   2743mm beyond the bow deployed and 900mm stowed, so both states are drawn to
+   the same scale as everything else. It exits at the stem head and rises a little
+   going forward. */
+var POLE_EXIT={x:BOWX+3, y:DECKY-18};
+var SPRIT_EXT={x:BOWX-2743*MMPX, y:DECKY-26};
+var SPRIT_RET={x:BOWX-900*MMPX,  y:DECKY-21};
 function qpt(p0,p1,p2,t){var u=1-t;return{x:u*u*p0.x+2*u*t*p1.x+t*t*p2.x, y:u*u*p0.y+2*u*t*p1.y+t*t*p2.y}}
 function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)}).join(" ")}
 (function(){
@@ -993,11 +999,16 @@ function pline(pts){return pts.map(function(p,i){return (i?"L":"M")+p.x.toFixed(
      and a transom that stops dead at the waterline */
   /* fine plumb stem, low freeboard, next to no rocker in the run aft */
   el("hull").setAttribute("d",
-    "M140 357 C134 364 131 374 133 387 Q196 393 254 391 Q302 390 326 388 L327 368 "+
-    "Q240 376 140 357 Z");
+    /* the nose: the foredeck rounds over on a tight radius into the stem, and the
+       pole comes out of that curve — the shape the reference shows head-on */
+    "M140 352.5 C134 354.5 131.5 361 132 370 "+
+    /* stem close to plumb, then a cut-away forefoot into the long run */
+    "C132.5 381 147 389.5 178 391 Q256 393 326 388 L327 368 "+
+    /* sheer: low and near-flat aft, lifting late and steeply into a fine entry */
+    "C252 374 188 365 140 352.5 Z");
   /* the racks, which on a 14 are most of the boat's beam */
   el("racks").setAttribute("d",
-    "M146 352 Q238 363 320 360 M176 356 L177 368 M238 363 L238 372 M292 361 L291 370");
+    "M176 359 C232 361 282 362 322 362 M200 360 L200 370 M252 361 L252 372 M302 362 L302 370");
   /* daggerboard and the T-foil rudder */
   el("board").setAttribute("d","M219 386 L227 386 L230 427 L224 427 Z");
   el("rudder").setAttribute("d","M320 384 L326 382 L328 421 L323 421 Z");
@@ -1124,13 +1135,17 @@ function renderRig(m){
   lw.setAttribute("stroke-width",(.9+S.lowers*1.9).toFixed(2));
   lw.setAttribute("opacity",(.3+S.lowers*.7).toFixed(2));
 
-  /* ── bowsprit and kite ── */
-  var kEls=["kite","kiteluff","sprit","tackline"];
+  /* ── bowsprit ── always there: run out for the kite, stowed the rest of the time */
+  var POLE=m.kiteUp?SPRIT_EXT:SPRIT_RET;
+  el("sprit").setAttribute("display","");
+  el("sprit").setAttribute("d","M"+POLE_EXIT.x+" "+POLE_EXIT.y+"L"+POLE.x.toFixed(1)+" "+POLE.y);
+
+  /* ── kite ── */
+  var kEls=["kite","kiteluff","tackline"];
   if(m.kiteUp){
     kEls.forEach(function(id){el(id).setAttribute("display","")});
-    el("sprit").setAttribute("d","M"+(BOWX+4)+" "+(DECKY-5)+"L"+SPRIT.x.toFixed(1)+" "+SPRIT.y);
     /* tack rides up the luff as the tack line is eased */
-    var tack={x:SPRIT.x+3, y:SPRIT.y-54*(1-S.tack)};
+    var tack={x:POLE.x+3, y:POLE.y-54*(1-S.tack)};
     var head=mastPt(.93); head={x:head.x-6, y:head.y+6};
     var clew={x:BOW.x+108, y:BOW.y-150};
     /* belly of the kite — fuller with the tack up */
@@ -1158,7 +1173,7 @@ function renderRig(m){
     }
     el("kite").setAttribute("fill-opacity",(.06+.16*m.kiteEff).toFixed(3));
     var tl=el("tackline");
-    tl.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+"L"+(SPRIT.x+4)+" "+SPRIT.y);
+    tl.setAttribute("d","M"+tack.x.toFixed(1)+" "+tack.y.toFixed(1)+"L"+(POLE.x+4).toFixed(1)+" "+POLE.y);
     tl.setAttribute("stroke-width",(1+S.tack*1.8).toFixed(2));
     tl.setAttribute("opacity",(.3+S.tack*.7).toFixed(2));
   } else {
@@ -1191,7 +1206,7 @@ function renderRig(m){
   /* Centre the boat in its frame. Stowed, that is hull and rig alone; with the pole
      out the pole is part of the picture, so the whole lot re-centres and the boat
      slides right to make room for it. */
-  var leftEdge=m.kiteUp?SPRIT.x:BOWX, rightEdge=TRANSOMX+6.5;   /* boom end and leech roach reach past the transom */
+  var leftEdge=(m.kiteUp?SPRIT_EXT:SPRIT_RET).x, rightEdge=TRANSOMX+6.5;   /* boom end and leech roach reach past the transom */
   el("rig-body").style.transform="translate("+(168-(leftEdge+rightEdge)/2).toFixed(1)+"px,0)";
 
   var bl=el("bendlbl"), sl=el("saglbl"), rl=el("riglbl");
